@@ -35,12 +35,24 @@
 
 /** Terminals. */
 %token <integer> INTEGER
-%token <token> ADD
-%token <token> CLOSE_PARENTHESIS
-%token <token> DIV
-%token <token> MUL
-%token <token> OPEN_PARENTHESIS
-%token <token> SUB
+%token <token> METHOD
+%token <token> VARIABLES
+%token <token> STYLE
+%token <token> PARAMS
+%token <token> RANGE
+%token <token> REGEX
+%token <token> DESCRIPTION
+%token <token> RELATED
+%token <token> TYPE
+%token <token> OPEN_BRACES
+%token <token> CLOSE_BRACES
+%token <token> OPEN_BRACKET
+%token <token> CLOSE_BRACKET
+%token <token> COLON
+%token <token> STRING
+%token <token> COMMA
+%token <token> TITLE
+
 
 %token <token> UNKNOWN
 
@@ -62,21 +74,36 @@
 
 // IMPORTANT: To use λ in the following grammar, use the %empty symbol.
 
-program: expression													{ $$ = ExpressionProgramSemanticAction(currentCompilerState(), $1); }
+program: expression
 	;
 
-expression: expression[left] ADD expression[right]					{ $$ = ArithmeticExpressionSemanticAction($left, $right, ADDITION); }
-	| expression[left] DIV expression[right]						{ $$ = ArithmeticExpressionSemanticAction($left, $right, DIVISION); }
-	| expression[left] MUL expression[right]						{ $$ = ArithmeticExpressionSemanticAction($left, $right, MULTIPLICATION); }
-	| expression[left] SUB expression[right]						{ $$ = ArithmeticExpressionSemanticAction($left, $right, SUBTRACTION); }
-	| factor														{ $$ = FactorExpressionSemanticAction($1); }
+expression:  OPEN_BRACES METHOD COLON functions CLOSE_BRACES 
+	| COMMA STYLE COLON OPEN_BRACES METHOD COLON OPEN_BRACES TITLE COLON STRING COMMA
+	| DESCRIPTION COLON STRING
+	| CLOSE_BRACES CLOSE_BRACES
+
+functions: OPEN_BRACES STRING COLON params COMMA
+	| DESCRIPTION COLON STRING COMMA	
+	| TYPE COLON STRING
+	| RELATED COLON OPEN_BRACKET STRING COMMA STRING CLOSE_BRACKET COMMA
+	| variables 		
+	| CLOSE_BRACES
 	;
 
-factor: OPEN_PARENTHESIS expression CLOSE_PARENTHESIS				{ $$ = ExpressionFactorSemanticAction($2); }
-	| constant														{ $$ = ConstantFactorSemanticAction($1); }
+params: OPEN_BRACES PARAMS COLON parameters CLOSE_BRACES ;
+
+parameters: OPEN_BRACES STRING COLON parameters_content CLOSE_BRACES ;
+
+parameters_content: OPEN_BRACES TYPE COLON STRING COMMA
+	| REGEX COLON STRING COMMA	
+	| RANGE COLON STRING COMMA					
 	;
 
-constant: INTEGER													{ $$ = IntegerConstantSemanticAction($1); }
+variables: OPEN_BRACES STRING COLON variables_content CLOSE_BRACES ;
+
+variables_content: OPEN_BRACES TYPE COLON STRING COMMA
+	| DESCRIPTION COLON STRING
+	| CLOSE_BRACES				
 	;
 
 %%

@@ -83,3 +83,17 @@ Token UnknownLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext) {
 	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
 	return UNKNOWN;
 }
+
+Token KeywordLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token) {
+	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
+	lexicalAnalyzerContext->semanticValue->token = token;
+	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
+	return token;
+}
+
+Token StringLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token) {
+	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
+	lexicalAnalyzerContext->semanticValue->token = token;
+	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
+	return token;
+}
