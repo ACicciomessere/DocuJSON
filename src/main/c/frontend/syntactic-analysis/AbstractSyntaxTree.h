@@ -14,64 +14,103 @@ void shutdownAbstractSyntaxTreeModule();
  * This typedefs allows self-referencing types.
  */
 
-typedef enum ExpressionType ExpressionType;
-typedef enum FactorType FactorType;
-
-typedef struct Constant Constant;
-typedef struct Expression Expression;
-typedef struct Factor Factor;
 typedef struct Program Program;
+typedef struct MethodList MethodList;
+typedef struct Method Method;
+typedef struct MethodContent MethodContent;
+typedef struct ParamsList ParamsList;
+typedef struct Param Param;
+typedef struct ParamData ParamData;
+typedef struct VariableList VariableList;
+typedef struct Variable Variable;
+typedef struct VariableData VariableData;
+typedef struct RelatedList RelatedList;
+typedef struct Style Style;
 
 /**
  * Node types for the Abstract Syntax Tree (AST).
  */
 
-enum ExpressionType {
-	ADDITION,
-	DIVISION,
-	FACTOR,
-	MULTIPLICATION,
-	SUBTRACTION
+struct Program
+{
+	MethodList *methods;
+	Style *style;
 };
 
-enum FactorType {
-	CONSTANT,
-	EXPRESSION
+struct MethodList
+{
+	Method *method;
+	MethodList *next;
 };
 
-struct Constant {
-	int value;
+struct Method
+{
+	char *name;
+	MethodContent *content;
 };
 
-struct Factor {
-	union {
-		Constant * constant;
-		Expression * expression;
-	};
-	FactorType type;
+struct MethodContent
+{
+	ParamsList *params;
+	char *description;
+	char *type;
+	RelatedList *related;
+	VariableList *variables;
 };
 
-struct Expression {
-	union {
-		Factor * factor;
-		struct {
-			Expression * leftExpression;
-			Expression * rightExpression;
-		};
-	};
-	ExpressionType type;
+struct ParamsList
+{
+	Param *param;
+	ParamsList *next;
 };
 
-struct Program {
-	Expression * expression;
+struct Param
+{
+	char *name;
+	ParamData *data;
+};
+
+struct ParamData
+{
+	char *type;
+	char *regex;
+	char *range;
+	char *description;
+};
+
+struct RelatedList
+{
+	char *name;
+	RelatedList *next;
+};
+
+struct VariableList
+{
+	Variable *variable;
+	VariableList *next;
+};
+
+struct Variable
+{
+	char *name;
+	VariableData *data;
+};
+
+struct VariableData
+{
+	char *type;
+	char *description;
+};
+
+struct Style
+{
+	char *title;
+	char *description;
 };
 
 /**
  * Node recursive destructors.
  */
-void releaseConstant(Constant * constant);
-void releaseExpression(Expression * expression);
-void releaseFactor(Factor * factor);
-void releaseProgram(Program * program);
+void releaseProgram(Program *program);
 
 #endif

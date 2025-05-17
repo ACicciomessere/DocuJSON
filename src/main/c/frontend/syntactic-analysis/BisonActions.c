@@ -2,14 +2,17 @@
 
 /* MODULE INTERNAL STATE */
 
-static Logger * _logger = NULL;
+static Logger *_logger = NULL;
 
-void initializeBisonActionsModule() {
+void initializeBisonActionsModule()
+{
 	_logger = createLogger("BisonActions");
 }
 
-void shutdownBisonActionsModule() {
-	if (_logger != NULL) {
+void shutdownBisonActionsModule()
+{
+	if (_logger != NULL)
+	{
 		destroyLogger(_logger);
 	}
 }
@@ -20,77 +23,141 @@ extern unsigned int flexCurrentContext(void);
 
 /* PRIVATE FUNCTIONS */
 
-static void _logSyntacticAnalyzerAction(const char * functionName);
+static void _logSyntacticAnalyzerAction(const char *functionName);
 
 /**
  * Logs a syntactic-analyzer action in DEBUGGING level.
  */
-static void _logSyntacticAnalyzerAction(const char * functionName) {
+static void _logSyntacticAnalyzerAction(const char *functionName)
+{
 	logDebugging(_logger, "%s", functionName);
 }
 
 /* PUBLIC FUNCTIONS */
-
-Constant * IntegerConstantSemanticAction(const int value) {
+Program *ProgramSemanticAction(CompilerState *compilerState, MethodList *methods, Style *style)
+{
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Constant * constant = calloc(1, sizeof(Constant));
-	constant->value = value;
-	return constant;
-}
-
-Expression * ArithmeticExpressionSemanticAction(Expression * leftExpression, Expression * rightExpression, ExpressionType type) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Expression * expression = calloc(1, sizeof(Expression));
-	expression->leftExpression = leftExpression;
-	expression->rightExpression = rightExpression;
-	expression->type = type;
-	return expression;
-}
-
-Expression * FactorExpressionSemanticAction(Factor * factor) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Expression * expression = calloc(1, sizeof(Expression));
-	expression->factor = factor;
-	expression->type = FACTOR;
-	return expression;
-}
-
-Factor * ConstantFactorSemanticAction(Constant * constant) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Factor * factor = calloc(1, sizeof(Factor));
-	factor->constant = constant;
-	factor->type = CONSTANT;
-	return factor;
-}
-
-Factor * ExpressionFactorSemanticAction(Expression * expression) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Factor * factor = calloc(1, sizeof(Factor));
-	factor->expression = expression;
-	factor->type = EXPRESSION;
-	return factor;
-}
-
-Program * ExpressionProgramSemanticAction(CompilerState * compilerState, Expression * expression) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Program * program = calloc(1, sizeof(Program));
-	program->expression = expression;
+	Program *program = calloc(1, sizeof(Program));
+	program->methods = methods;
+	program->style = style;
 	compilerState->abstractSyntaxtTree = program;
-	if (0 < flexCurrentContext()) {
+	if (0 < flexCurrentContext())
+	{
 		logError(_logger, "The final context is not the default (0): %d", flexCurrentContext());
 		compilerState->succeed = false;
 	}
-	else {
+	else
+	{
 		compilerState->succeed = true;
 	}
 	return program;
 }
 
-Expression * MethodExpressionSemanticAction(Expression * leftExpression, Expression * rightExpression, ExpressionType type) {
+char *echoString(char *string)
+{
+	return string;
+}
+
+ParamsList *ParamsListSemanticAction(Param *param, ParamsList *params)
+{
 	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Expression * expression = calloc(1, sizeof(Expression));
-	expression->leftExpression = leftExpression;
-	expression->rightExpression = rightExpression;
-	expression->type = type;
-	return expression;
+	ParamsList *paramsList = calloc(1, sizeof(ParamsList));
+	paramsList->param = param;
+	paramsList->next = params;
+	return paramsList;
+}
+
+Param *ParamSemanticAction(char *name, ParamData *data)
+{
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Param *param = calloc(1, sizeof(Param));
+	param->name = name;
+	param->data = data;
+	return param;
+}
+
+ParamData *ParamDataSemanticAction(char *type, char *regex, char *range, char *description)
+{
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	ParamData *paramData = calloc(1, sizeof(ParamData));
+	paramData->type = type;
+	paramData->regex = regex;
+	paramData->range = range;
+	paramData->description = description;
+	return paramData;
+}
+
+VariableList *VariableListSemanticAction(Variable *variable, VariableList *variables)
+{
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	VariableList *variableList = calloc(1, sizeof(VariableList));
+	variableList->variable = variable;
+	variableList->next = variables;
+	return variableList;
+}
+
+Variable *VariableSemanticAction(char *name, VariableData *data)
+{
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Variable *variable = calloc(1, sizeof(Variable));
+	variable->name = name;
+	variable->data = data;
+	return variable;
+}
+
+VariableData *VariableDataSemanticAction(char *type, char *description)
+{
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	VariableData *variableData = calloc(1, sizeof(VariableData));
+	variableData->type = type;
+	variableData->description = description;
+	return variableData;
+}
+
+MethodContent *MethodContentSemanticAction(ParamsList *params, char *description, char *type, RelatedList *related, VariableList *variables)
+{
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	MethodContent *methodContent = calloc(1, sizeof(MethodContent));
+	methodContent->params = params;
+	methodContent->description = description;
+	methodContent->type = type;
+	methodContent->related = related;
+	methodContent->variables = variables;
+	return methodContent;
+}
+
+Method *MethodSemanticAction(char *name, MethodContent *content)
+{
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Method *method = calloc(1, sizeof(Method));
+	method->name = name;
+	method->content = content;
+	return method;
+}
+
+MethodList *MethodListSemanticAction(Method *method, MethodList *methods)
+{
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	MethodList *methodList = calloc(1, sizeof(MethodList));
+	methodList->method = method;
+	methodList->next = methods;
+	return methodList;
+}
+
+RelatedList *RelatedListSemanticAction(char *name, RelatedList *related)
+{
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	RelatedList *relatedList = calloc(1, sizeof(RelatedList));
+	relatedList->name = name;
+	relatedList->next = related;
+	return relatedList;
+}
+
+Style *StyleSemanticAction(char *title, char *description)
+{
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Style *style = calloc(1, sizeof(Style));
+	style->title = title;
+	style->description = description;
+	return style;
 }

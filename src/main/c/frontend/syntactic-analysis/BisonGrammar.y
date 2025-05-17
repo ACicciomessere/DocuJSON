@@ -9,16 +9,22 @@
 
 %union {
 	/** Terminals. */
-
-	int integer;
 	Token token;
+	char * string;
+	ParamData * param_data;
+	VariableData * variable_data;
+	Style * style;
 
 	/** Non-terminals. */
-
-	Constant * constant;
-	Expression * expression;
-	Factor * factor;
-	Program * program;
+	Program * Program;
+	MethodList * method_list;
+ 	Method * method;
+	MethodContent * method_content;
+	ParamsList * params_list;
+	Param * param;
+	VariableList * variable_list;
+	Variable * variable;
+	RelatedList * related_list;
 }
 
 /**
@@ -29,14 +35,12 @@
  *
  * @see https://www.gnu.org/software/bison/manual/html_node/Destructor-Decl.html
  */
-%destructor { releaseConstant($$); } <constant>
+/* %destructor { releaseConstant($$); } <constant>
 %destructor { releaseExpression($$); } <expression>
-%destructor { releaseFactor($$); } <factor>
+%destructor { releaseFactor($$); } <factor> */
 
 /** Terminals. */
-%token <integer> INTEGER
 %token <token> METHOD
-%token <token> VARIABLES
 %token <token> STYLE
 %token <token> PARAMS
 %token <token> RANGE
@@ -49,61 +53,143 @@
 %token <token> OPEN_BRACKET
 %token <token> CLOSE_BRACKET
 %token <token> COLON
-%token <token> STRING
 %token <token> COMMA
 %token <token> TITLE
+%token <token> VARIABLES
+/* ??????????????????????????????????????*/
+%token <string> STRING
 
-
-%token <token> UNKNOWN
+/* ?????????????????????????????' ' */
+%type <param_data> param_data
+%type <variable_data> variable_data
+%type <style> style
+%type <string> description
+%type <string> type
+%type <string> regex
+%type <string> range
+%type <string> title
+%type <style> style_content
 
 /** Non-terminals. */
-%type <constant> constant
-%type <expression> expression
-%type <factor> factor
-%type <program> program
+%type <Program> program
+%type <method_list> method_list
+%type <method> method
+%type <method_content> method_content
+%type <params_list> param_list
+%type <param> param
+%type <variable_list> variable_list
+%type <variable> variable
+%type <related_list> related_list
 
 /**
  * Precedence and associativity.
  *
  * @see https://www.gnu.org/software/bison/manual/html_node/Precedence.html
  */
-%left ADD SUB
-%left MUL DIV
+/* %left ADD SUB
+%left MUL DIV */
 
 %%
 
 // IMPORTANT: To use λ in the following grammar, use the %empty symbol.
 
-program: expression
+program:
+	OPEN_BRACES methods COMMA style CLOSE_BRACES		{$$ = ProgramSemanticAction(currentCompilerState(), $2, $4);}
 	;
 
-expression:  OPEN_BRACES METHOD COLON functions CLOSE_BRACES 
-	| COMMA STYLE COLON OPEN_BRACES METHOD COLON OPEN_BRACES TITLE COLON STRING COMMA
-	| DESCRIPTION COLON STRING
-	| CLOSE_BRACES CLOSE_BRACES
-
-functions: OPEN_BRACES STRING COLON params COMMA
-	| DESCRIPTION COLON STRING COMMA	
-	| TYPE COLON STRING
-	| RELATED COLON OPEN_BRACKET STRING COMMA STRING CLOSE_BRACKET COMMA
-	| variables 		
-	| CLOSE_BRACES
+methods:
+	METHOD COLON OPEN_BRACES method_list CLOSE_BRACES
 	;
 
-params: OPEN_BRACES PARAMS COLON parameters CLOSE_BRACES ;
-
-parameters: OPEN_BRACES STRING COLON parameters_content CLOSE_BRACES ;
-
-parameters_content: OPEN_BRACES TYPE COLON STRING COMMA
-	| REGEX COLON STRING COMMA	
-	| RANGE COLON STRING COMMA					
+method_list:
+	method							{$$ = MethodListSemanticAction($1, NULL);}
+	| method COMMA method_list		{$$ = MethodListSemanticAction($1, $3);}
 	;
 
-variables: OPEN_BRACES STRING COLON variables_content CLOSE_BRACES ;
-
-variables_content: OPEN_BRACES TYPE COLON STRING COMMA
-	| DESCRIPTION COLON STRING
-	| CLOSE_BRACES				
+method:
+	STRING COLON OPEN_BRACES method_content CLOSE_BRACES	{$$ = MethodSemanticAction($1, $4);}
 	;
+
+method_content:
+	params COMMA description COMMA type COMMA related COMMA variables	{$$ = MethodContentSemanticAction($1, $3, $5, $7, $9);}
+	;
+
+params:
+	PARAMS COLON OPEN_BRACES param_list CLOSE_BRACES
+	;
+
+param_list:
+	%empty							{$$ = NULL}
+	| param							{$$ = ParamsListSemanticAction($1, NULL)}
+	| param COMMA param_list		{$$ = ParamsListSemanticAction($1, $3)}
+	;
+
+param:
+	STRING COLON OPEN_BRACES param_data CLOSE_BRACES		{$$ = ParamSemanticAction($1, $4)}
+	;
+
+param_data:
+	type COMMA regex COMMA range COMMA description			{$$ = ParamDataSemanticAction($1, $3, $5, $7);}
+	;
+
+related:
+	RELATED COLON OPEN_BRACKET related_list CLOSE_BRACKET
+	;
+
+related_list:
+	%empty								{$$= NULL}
+	| STRING							{$$ = RelatedListSemanticAction($1, NULL);}
+	| STRING COMMA related_list			{$$ = RelatedListSemanticAction($1, $3);}
+	;
+
+variables:
+	VARIABLES COLON OPEN_BRACES variable_list CLOSE_BRACES 
+	;	
+
+variable_list:
+	%empty								{$$ = NULL}
+	| variable							{$$ = VariableListSemanticAction($1, NULL);}
+	| variable COMMA variable_list		{$$ = VariableListSemanticAction($1, $3);}
+	;
+
+variable:
+	STRING COLON OPEN_BRACES variable_data CLOSE_BRACES {$$ = VariableSemanticAction($1, $4)}
+	;
+
+variable_data:
+	type COMMA description  { $$ = VariableDataSemanticAction($1, $3); }
+	;
+
+style:
+	STYLE COLON OPEN_BRACES style_content CLOSE_BRACES	
+	;
+
+style_content:
+	METHOD COLON title COMMA description		{$$ = StyleSemanticAction($3,$5 );}
+	;
+
+/* name: value*/
+
+description:
+	DESCRIPTION COLON STRING		{$$ = echoString($3);}
+	;	
+
+type:
+	TYPE COLON STRING			{$$ = echoString($3);}	
+	;
+
+regex:
+	REGEX COLON STRING			{$$ = echoString($3);}
+	;
+
+range:
+	/* RANGE COLON OPEN_BRACKET STRING COMMA STRING CLOSE_BRACKET */
+	RANGE COLON STRING 			{$$ = echoString($3);}
+	;
+
+title:
+	TITLE COLON STRING			{$$ = echoString($3);}	
+	;
+
 
 %%
