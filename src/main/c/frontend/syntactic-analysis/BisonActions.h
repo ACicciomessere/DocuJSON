@@ -18,23 +18,28 @@ void shutdownBisonActionsModule();
  * Bison semantic actions.
  */
 
-Program *ProgramSemanticAction(CompilerState *compilerState, MethodList *methods, Style *style);
+Program *ProgramSemanticAction(CompilerState *compilerState, MethodTitle *methods, StyleTitle *style);
 char *echoString(char *string);
 
+MethodTitle *MethodTitleSemanticAction(char *title, MethodList *methods);
 MethodList *MethodListSemanticAction(Method *method, MethodList *methods);
 Method *MethodSemanticAction(char *name, MethodContent *content);
-MethodContent *MethodContentSemanticAction(ParamsList *params, char *description, char *type, RelatedList *related, VariableList *variables);
+MethodContent *MethodContentSemanticAction(ParamsTitle *params, char *description, char *type, RelatedTitle *related, VariablesTitle *variables);
 
+ParamsTitle *ParamsTitleSemanticAction(char *title, ParamsList *params);
 ParamsList *ParamsListSemanticAction(Param *Param, ParamsList *Params);
 Param *ParamSemanticAction(char *name, ParamData *data);
 ParamData *ParamDataSemanticAction(char *type, char *regex, char *range, char *description);
 
+RelatedTitle *RelatedTitleSemanticAction(char *title, RelatedList *related);
 RelatedList *RelatedListSemanticAction(char *name, RelatedList *related);
 
+VariablesTitle *VariablesTitleSemanticAction(char *title, VariableList *variables);
 VariableList *VariableListSemanticAction(Variable *variable, VariableList *variables);
 Variable *VariableSemanticAction(char *name, VariableData *data);
 VariableData *VariableDataSemanticAction(char *type, char *description);
 
+StyleTitle *StyleTitleSemanticAction(char *title, Style *style);
 Style *StyleSemanticAction(char *name, char *value);
 
 #endif

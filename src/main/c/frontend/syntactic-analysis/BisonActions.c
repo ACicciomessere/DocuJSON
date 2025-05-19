@@ -34,7 +34,7 @@ static void _logSyntacticAnalyzerAction(const char *functionName)
 }
 
 /* PUBLIC FUNCTIONS */
-Program *ProgramSemanticAction(CompilerState *compilerState, MethodList *methods, Style *style)
+Program *ProgramSemanticAction(CompilerState *compilerState, MethodTitle *methods, StyleTitle *style)
 {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Program *program = calloc(1, sizeof(Program));
@@ -114,7 +114,7 @@ VariableData *VariableDataSemanticAction(char *type, char *description)
 	return variableData;
 }
 
-MethodContent *MethodContentSemanticAction(ParamsList *params, char *description, char *type, RelatedList *related, VariableList *variables)
+MethodContent *MethodContentSemanticAction(ParamsTitle *params, char *description, char *type, RelatedTitle *related, VariablesTitle *variables)
 {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	MethodContent *methodContent = calloc(1, sizeof(MethodContent));
@@ -160,4 +160,49 @@ Style *StyleSemanticAction(char *title, char *description)
 	style->title = title;
 	style->description = description;
 	return style;
+}
+
+MethodTitle *MethodTitleSemanticAction(char *title, MethodList *methods)
+{
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	MethodTitle *methodTitle = calloc(1, sizeof(MethodTitle));
+	methodTitle->title = title;
+	methodTitle->methods = methods;
+	return methodTitle;
+}
+
+ParamsTitle *ParamsTitleSemanticAction(char *title, ParamsList *params)
+{
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	ParamsTitle *paramsTitle = calloc(1, sizeof(ParamsTitle));
+	paramsTitle->title = title;
+	paramsTitle->params = params;
+	return paramsTitle;
+}
+
+VariablesTitle *VariablesTitleSemanticAction(char *title, VariableList *variables)
+{
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	VariablesTitle *variablesTitle = calloc(1, sizeof(VariablesTitle));
+	variablesTitle->title = title;
+	variablesTitle->variables = variables;
+	return variablesTitle;
+}
+
+RelatedTitle *RelatedTitleSemanticAction(char *title, RelatedList *related)
+{
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	RelatedTitle *relatedTitle = calloc(1, sizeof(RelatedTitle));
+	relatedTitle->title = title;
+	relatedTitle->related = related;
+	return relatedTitle;
+}
+
+StyleTitle *StyleTitleSemanticAction(char *title, Style *style)
+{
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	StyleTitle *styleTitle = calloc(1, sizeof(StyleTitle));
+	styleTitle->title = title;
+	styleTitle->style = style;
+	return styleTitle;
 }

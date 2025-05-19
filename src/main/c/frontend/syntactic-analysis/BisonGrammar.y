@@ -13,18 +13,28 @@
 	char * string;
 	ParamData * param_data;
 	VariableData * variable_data;
-	Style * style;
+	Style * style_content;
 
 	/** Non-terminals. */
 	Program * Program;
+
+	MethodTitle * methods;
 	MethodList * method_list;
  	Method * method;
 	MethodContent * method_content;
+
+	ParamsTitle * params;
 	ParamsList * params_list;
 	Param * param;
+
+	VariablesTitle * variables;
 	VariableList * variable_list;
 	Variable * variable;
+
+	RelatedTitle * related;
 	RelatedList * related_list;
+
+	StyleTitle * style;
 }
 
 /**
@@ -56,31 +66,44 @@
 %token <token> COMMA
 %token <token> TITLE
 %token <token> VARIABLES
+
+%token <token> OPEN_PAREN CLOSE_PAREN
+%token <token> TRUE FALSE NULL_VALUE
+%token <token> QUOTE
+%token <token> METHODS 
 /* ??????????????????????????????????????*/
 %token <string> STRING
 
 /* ?????????????????????????????' ' */
 %type <param_data> param_data
 %type <variable_data> variable_data
-%type <style> style
 %type <string> description
 %type <string> type
 %type <string> regex
 %type <string> range
 %type <string> title
-%type <style> style_content
+%type <style_content> style_content
 
 /** Non-terminals. */
 %type <Program> program
+
+%type <methods> methods
 %type <method_list> method_list
 %type <method> method
 %type <method_content> method_content
+
+%type <params> params
 %type <params_list> param_list
 %type <param> param
+
+%type <variables> variables
 %type <variable_list> variable_list
 %type <variable> variable
+
+%type <related> related
 %type <related_list> related_list
 
+%type <style> style
 /**
  * Precedence and associativity.
  *
@@ -98,7 +121,7 @@ program:
 	;
 
 methods:
-	METHOD COLON OPEN_BRACES method_list CLOSE_BRACES
+	METHOD COLON OPEN_BRACES method_list CLOSE_BRACES	{$$ = MethodTitleSemanticAction($1, $4);}
 	;
 
 method_list:
@@ -115,17 +138,17 @@ method_content:
 	;
 
 params:
-	PARAMS COLON OPEN_BRACES param_list CLOSE_BRACES
+	PARAMS COLON OPEN_BRACES param_list CLOSE_BRACES	{$$ = ParamsTitleSemanticAction($1, $4);}
 	;
 
 param_list:
-	%empty							{$$ = NULL}
-	| param							{$$ = ParamsListSemanticAction($1, NULL)}
-	| param COMMA param_list		{$$ = ParamsListSemanticAction($1, $3)}
+	%empty							{$$ = NULL;}
+	| param							{$$ = ParamsListSemanticAction($1, NULL);}
+	| param COMMA param_list		{$$ = ParamsListSemanticAction($1, $3);}
 	;
 
 param:
-	STRING COLON OPEN_BRACES param_data CLOSE_BRACES		{$$ = ParamSemanticAction($1, $4)}
+	STRING COLON OPEN_BRACES param_data CLOSE_BRACES		{$$ = ParamSemanticAction($1, $4);}
 	;
 
 param_data:
@@ -133,27 +156,27 @@ param_data:
 	;
 
 related:
-	RELATED COLON OPEN_BRACKET related_list CLOSE_BRACKET
+	RELATED COLON OPEN_BRACKET related_list CLOSE_BRACKET	{$$ = RelatedTitleSemanticAction($1, $4);}
 	;
 
 related_list:
-	%empty								{$$= NULL}
+	%empty								{$$= NULL;}
 	| STRING							{$$ = RelatedListSemanticAction($1, NULL);}
 	| STRING COMMA related_list			{$$ = RelatedListSemanticAction($1, $3);}
 	;
 
 variables:
-	VARIABLES COLON OPEN_BRACES variable_list CLOSE_BRACES 
+	VARIABLES COLON OPEN_BRACES variable_list CLOSE_BRACES 	{$$ = VariablesTitleSemanticAction($1, $4);}
 	;	
 
 variable_list:
-	%empty								{$$ = NULL}
+	%empty								{$$ = NULL;}
 	| variable							{$$ = VariableListSemanticAction($1, NULL);}
 	| variable COMMA variable_list		{$$ = VariableListSemanticAction($1, $3);}
 	;
 
 variable:
-	STRING COLON OPEN_BRACES variable_data CLOSE_BRACES {$$ = VariableSemanticAction($1, $4)}
+	STRING COLON OPEN_BRACES variable_data CLOSE_BRACES {$$ = VariableSemanticAction($1, $4);}
 	;
 
 variable_data:
@@ -161,7 +184,7 @@ variable_data:
 	;
 
 style:
-	STYLE COLON OPEN_BRACES style_content CLOSE_BRACES	
+	STYLE COLON OPEN_BRACES style_content CLOSE_BRACES		{$$ = StyleTitleSemanticAction($1, $4);}
 	;
 
 style_content:

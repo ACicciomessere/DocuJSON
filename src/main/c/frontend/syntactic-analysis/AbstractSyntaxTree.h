@@ -14,27 +14,66 @@ void shutdownAbstractSyntaxTreeModule();
  * This typedefs allows self-referencing types.
  */
 
+typedef enum Titles Titles;
+
 typedef struct Program Program;
+
+typedef struct MethodTitle MethodTitle;
 typedef struct MethodList MethodList;
 typedef struct Method Method;
 typedef struct MethodContent MethodContent;
+
+typedef struct ParamsTitle ParamsTitle;
 typedef struct ParamsList ParamsList;
 typedef struct Param Param;
 typedef struct ParamData ParamData;
+
+typedef struct VariablesTitle VariablesTitle;
 typedef struct VariableList VariableList;
 typedef struct Variable Variable;
 typedef struct VariableData VariableData;
+
+typedef struct RelatedTitle RelatedTitle;
 typedef struct RelatedList RelatedList;
+
+typedef struct StyleTitle StyleTitle;
 typedef struct Style Style;
 
 /**
  * Node types for the Abstract Syntax Tree (AST).
  */
 
+enum Titles
+{
+	AST_METHOD,
+	AST_PARAMS,
+	AST_TYPE,
+	AST_REGEX,
+	AST_RANGE,
+	AST_DESCRIPTION,
+	AST_RELATED,
+	AST_VARIABLES,
+	AST_STYLE,
+	AST_TITLE
+
+};
+
+// struct Program
+// {
+// 	MethodList *methods;
+// 	Style *style;
+// };
+
 struct Program
 {
+	MethodTitle *methods;
+	StyleTitle *style;
+};
+
+struct MethodTitle
+{
+	Titles *title;
 	MethodList *methods;
-	Style *style;
 };
 
 struct MethodList
@@ -49,13 +88,28 @@ struct Method
 	MethodContent *content;
 };
 
+// struct MethodContent
+// {
+// 	ParamsList *params;
+// 	char *description;
+// 	char *type;
+// 	RelatedList *related;
+// 	VariableList *variables;
+// };
+
 struct MethodContent
 {
-	ParamsList *params;
+	ParamsTitle *params;
 	char *description;
 	char *type;
-	RelatedList *related;
-	VariableList *variables;
+	RelatedTitle *related;
+	VariablesTitle *variables;
+};
+
+struct ParamsTitle
+{
+	Titles *title;
+	ParamsList *params;
 };
 
 struct ParamsList
@@ -78,10 +132,22 @@ struct ParamData
 	char *description;
 };
 
+struct RelatedTitle
+{
+	Titles *title;
+	RelatedList *related;
+};
+
 struct RelatedList
 {
 	char *name;
 	RelatedList *next;
+};
+
+struct VariablesTitle
+{
+	Titles *title;
+	VariableList *variables;
 };
 
 struct VariableList
@@ -100,6 +166,12 @@ struct VariableData
 {
 	char *type;
 	char *description;
+};
+
+struct StyleTitle
+{
+	Titles *title;
+	Style *style;
 };
 
 struct Style
