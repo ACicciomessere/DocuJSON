@@ -43,27 +43,6 @@ typedef struct Style Style;
  * Node types for the Abstract Syntax Tree (AST).
  */
 
-enum Titles
-{
-	AST_METHOD,
-	AST_PARAMS,
-	AST_TYPE,
-	AST_REGEX,
-	AST_RANGE,
-	AST_DESCRIPTION,
-	AST_RELATED,
-	AST_VARIABLES,
-	AST_STYLE,
-	AST_TITLE
-
-};
-
-// struct Program
-// {
-// 	MethodList *methods;
-// 	Style *style;
-// };
-
 struct Program
 {
 	MethodTitle *methods;
@@ -72,7 +51,7 @@ struct Program
 
 struct MethodTitle
 {
-	Titles *title;
+	char *title;
 	MethodList *methods;
 };
 
@@ -108,7 +87,7 @@ struct MethodContent
 
 struct ParamsTitle
 {
-	Titles *title;
+	char *title;
 	ParamsList *params;
 };
 
@@ -134,7 +113,7 @@ struct ParamData
 
 struct RelatedTitle
 {
-	Titles *title;
+	char *title;
 	RelatedList *related;
 };
 
@@ -146,7 +125,7 @@ struct RelatedList
 
 struct VariablesTitle
 {
-	Titles *title;
+	char *title;
 	VariableList *variables;
 };
 
@@ -170,7 +149,7 @@ struct VariableData
 
 struct StyleTitle
 {
-	Titles *title;
+	char *title;
 	Style *style;
 };
 

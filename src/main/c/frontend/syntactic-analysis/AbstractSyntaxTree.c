@@ -62,6 +62,24 @@ void shutdownAbstractSyntaxTreeModule()
 // 	}
 // }
 
+void releaseMethods(MethodTitle *methods);
+void releaseMethodTitle(Titles *title);
+void releaseMethodList(MethodList *methods);
+void releaseMethod(Method *method);
+void releaseMethodContent(MethodContent *content);
+void releaseParamsTitle(Titles *title);
+void releaseParamsList(ParamsList *params);
+void releaseParam(Param *param);
+void releaseParamData(ParamData *data);
+void releaseRelatedTitle(Titles *title);
+void releaseRelatedList(RelatedList *related);
+void releaseVariablesTitle(Titles *title);
+void releaseVariablesList(VariableList *variables);
+void releaseVariable(Variable *variable);
+void releaseVariableData(VariableData *data);
+void releaseStyleTitle(Titles *title);
+void releaseStyle(Style *style);
+
 void releaseProgram(Program *program)
 {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
@@ -101,6 +119,7 @@ void releaseMethodList(MethodList *methods)
 		free(methods);
 	}
 }
+
 void releaseMethod(Method *method)
 {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
@@ -246,14 +265,5 @@ void releaseStyle(Style *style)
 		free(style->title);
 		free(style->description);
 		free(style);
-	}
-}
-
-void releaseTitles(Titles *title)
-{
-	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
-	if (title != NULL)
-	{
-		free(title);
 	}
 }
