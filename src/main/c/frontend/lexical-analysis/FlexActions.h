@@ -8,30 +8,31 @@
 #define CLOSE_BRACKET 259
 #define OPEN_PAREN 260
 #define CLOSE_PAREN 261
-#define COLON 262
-#define COMMA 263
+#define QUOTE 262
+#define COLON 263
+#define COMMA 264
 
-#define METHODS 264
-#define METHOD 265
-#define PARAMS 266
-#define DESCRIPTION 267
-#define TYPE 268
-#define STYLE 269
-#define TITLE 270
-#define RANGE 271
-#define REGEX 272
-#define RELATED 273
+#define METHODS 265
+#define METHOD 266
+#define PARAMS 267
+#define DESCRIPTION 268
+#define TYPE 269
+#define STYLE 270
+#define TITLE 271
+#define RANGE 272
+#define REGEX 273
+#define RELATED 274
 
-#define TRUE 274
-#define FALSE 275
-#define NULL_VALUE 276
+#define TRUE 275
+#define FALSE 276
+#define NULL_VALUE 277
 
-#define STRING 277
-#define INTEGER_NUMBER 278
-#define FLOAT_NUMBER 279
-#define IDENTIFIER 280
+#define STRING 278
+#define INTEGER_NUMBER 279
+#define FLOAT_NUMBER 280
+#define IDENTIFIER 281
 
-#define UNKNOWN_TOKEN 281
+#define UNKNOWN_TOKEN 282
 
 /**
  * Structure to hold lexical analyzer context information.

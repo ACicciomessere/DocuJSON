@@ -243,6 +243,7 @@ const char* getTokenName(int token) {
         case OPEN_PAREN: return "OPEN_PAREN";
         case CLOSE_PAREN: return "CLOSE_PAREN";
         case COLON: return "COLON";
+        case QUOTE: return "QUOTE";
         case COMMA: return "COMMA";
         case METHODS: return "METHODS";
         case METHOD: return "METHOD";

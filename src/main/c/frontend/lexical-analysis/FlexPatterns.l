@@ -51,7 +51,8 @@ STRING_CONTENT  ({STRING_CHAR}|{ESCAPE_CHAR})*
 "("									{ return ParenthesisLexemeAction(createLexicalAnalyzerContext(), OPEN_PAREN); }
 ")"									{ return ParenthesisLexemeAction(createLexicalAnalyzerContext(), CLOSE_PAREN); }
 ":"									{ return ParenthesisLexemeAction(createLexicalAnalyzerContext(), COLON); }
-","                                 { return ParenthesisLexemeAction(createLexicalAnalyzerContext(), COMMA); }
+","                                 { return ParenthesisLexemeAction(createLexicalAnalyzerContext(), QUOTE); }
+"""                                 
 
 
 "methods"							{ return KeywordLexemeAction(createLexicalAnalyzerContext(), METHODS); }
