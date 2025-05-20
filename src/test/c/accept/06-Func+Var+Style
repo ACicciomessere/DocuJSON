@@ -1,0 +1,24 @@
+{
+  methods: {
+    "startApp": {
+      params: {},
+      description: "Starts the application.",
+      type: "boolean"
+    }
+  },
+  variables: {
+    "theme": {
+      type: "string",
+      description: "Current UI theme selected."
+    }
+  },
+  style: {
+    methods: {
+      title: "color: blue, font-size: 24px",
+      description: "font-size: 16px"
+    },
+    variables: {
+      title: "color: black, font-size: 20px"
+    }
+  }
+}

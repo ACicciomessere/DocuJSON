@@ -1,0 +1,7 @@
+{
+  style: {
+    methods: {
+      title: "font-shadow: blue, blink: true"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  methods: {
+    "processData": {
+      params: {
+        "data": {
+          type: "string",
+          description: "The data to process."
+        }
+      },
+      description: "Processes the input data.",
+      type: "float"
+    }
+  }
+}

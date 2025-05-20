@@ -1,0 +1,25 @@
+{
+  methods: {
+    "validateEmail": {
+      params: {
+        "email": {
+          type: "string",
+          description: "Email to validate."
+        }
+      },
+      description: "Validates the format of an email address.",
+      type: "boolean"
+    },
+    "registerUser": {
+      params: {
+        "email": {
+          type: "string",
+          description: "Email to register."
+        }
+      },
+      description: "Registers a user using a valid email.",
+      type: "boolean",
+      related: ["validateEmail"]
+    }
+  }
+}

@@ -1,0 +1,78 @@
+{
+    methods: {
+        "formatDate": {
+            params: {
+                "date": {
+                    type: "Date",
+                    description: "The date object to format."
+                },
+                "format": {
+                    type: "string",
+                    description: "The format string, e.g., 'YYYY-MM-DD' or 'DD/MM/YYYY'."
+                }
+            },
+            description: "Formats a date object into a string according to the given pattern.",
+            type: "string",
+            variables: {
+                "year": {
+                    type: "number",
+                    description: "Extracted year from the date object."
+                },
+                "month": {
+                    type: "number",
+                    description: "Extracted month from the date object, 0-indexed."
+                },
+                "day": {
+                    type: "number",
+                    description: "Extracted day of the month from the date object."
+                },
+                "formatted": {
+                    type: "string",
+                    description: "Final formatted string to return."
+                }
+            }
+        },
+        "parseDate": {
+            params: {
+                "dateString": {
+                    type: "string",
+                    description: "The date string to parse, e.g., '2025-04-04'."
+                },
+                "format": {
+                    type: "string",
+                    description: "The format the string is in, e.g., 'YYYY-MM-DD'."
+                }
+            },
+            description: "Parses a date string into a Date object using the specified format.",
+            type: "Date",
+            variables: {
+                "formatParts": {
+                    type: "array",
+                    description: "Array of format tokens (e.g., ['YYYY', 'MM', 'DD'])."
+                },
+                "dateParts": {
+                    type: "array",
+                    description: "Array of parts extracted from the date string (e.g., ['2025', '04', '04'])."
+                },
+                "year": {
+                    type: "number",
+                    description: "Parsed year as number."
+                },
+                "month": {
+                    type: "number",
+                    description: "Parsed month as number (0-indexed for Date object)."
+                },
+                "day": {
+                    type: "number",
+                    description: "Parsed day as number."
+                }
+            }
+        },
+        style: {
+            methods: {
+                title: "color: navy, font-size: 28px",
+                description: "color: darkslategray, font-size: 16px"
+            }
+        }
+    }
+}

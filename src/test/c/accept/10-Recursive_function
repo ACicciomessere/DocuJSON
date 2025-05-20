@@ -1,0 +1,15 @@
+{
+  methods: {
+    "factorial": {
+      params: {
+        "n": {
+          type: "int",
+          description: "The number to compute factorial for."
+        }
+      },
+      description: "Calculates factorial recursively.",
+      type: "int",
+      related: ["factorial"]
+    }
+  }
+}

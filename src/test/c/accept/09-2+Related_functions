@@ -1,0 +1,36 @@
+{
+  methods: {
+    "encode": {
+      params: {
+        "text": {
+          type: "string",
+          description: "Text to encode."
+        }
+      },
+      description: "Encodes text to a safe format.",
+      type: "string"
+    },
+    "sendData": {
+      params: {
+        "data": {
+          type: "string",
+          description: "Data to send over the network."
+        }
+      },
+      description: "Sends encoded data to a server.",
+      type: "boolean",
+      related: ["encode"]
+    },
+    "saveData": {
+      params: {
+        "data": {
+          type: "string",
+          description: "Data to save locally."
+        }
+      },
+      description: "Saves encoded data to disk.",
+      type: "boolean",
+      related: ["encode"]
+    }
+  }
+}

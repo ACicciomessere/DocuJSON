@@ -1,0 +1,24 @@
+{
+  methods: {
+    "greet": {
+      params: {
+        "name": {
+          type: "string",
+          description: "Name of the person to greet."
+        }
+      },
+      description: "Greets a person with their name.",
+      type: "string"
+    },
+    "farewell": {
+      params: {
+        "name": {
+          type: "string",
+          description: "Name of the person to bid farewell."
+        }
+      },
+      description: "Says goodbye to a person.",
+      type: "string"
+    }
+  }
+}

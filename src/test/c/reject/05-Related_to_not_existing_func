@@ -1,0 +1,10 @@
+ {
+  methods: {
+    "generateReport": {
+      params: {},
+      description: "Generates a detailed report.",
+      type: "string",
+      related: ["nonExistentFunction"]
+    }
+  }
+}

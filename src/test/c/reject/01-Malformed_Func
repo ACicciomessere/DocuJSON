@@ -1,0 +1,13 @@
+{
+  methods: {
+    "brokenFunction": {
+      params: {
+        "x": {
+          type: "int"
+          description: "Missing comma between type and description."
+        }
+      },
+      description: "A function with bad formatting"
+      type: "int"
+    }
+  }
