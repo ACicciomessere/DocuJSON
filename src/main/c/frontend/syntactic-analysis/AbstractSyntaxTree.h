@@ -51,7 +51,7 @@ struct Program
 
 struct MethodTitle
 {
-	char *title;
+	Token title;
 	MethodList *methods;
 };
 
@@ -87,7 +87,7 @@ struct MethodContent
 
 struct ParamsTitle
 {
-	char *title;
+	Token title;
 	ParamsList *params;
 };
 
@@ -113,7 +113,7 @@ struct ParamData
 
 struct RelatedTitle
 {
-	char *title;
+	Token title;
 	RelatedList *related;
 };
 
@@ -125,7 +125,7 @@ struct RelatedList
 
 struct VariablesTitle
 {
-	char *title;
+	Token title;
 	VariableList *variables;
 };
 
@@ -149,7 +149,7 @@ struct VariableData
 
 struct StyleTitle
 {
-	char *title;
+	Token title;
 	Style *style;
 };
 

@@ -162,7 +162,7 @@ Style *StyleSemanticAction(char *title, char *description)
 	return style;
 }
 
-MethodTitle *MethodTitleSemanticAction(char *title, MethodList *methods)
+MethodTitle *MethodTitleSemanticAction(Token title, MethodList *methods)
 {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	MethodTitle *methodTitle = calloc(1, sizeof(MethodTitle));
@@ -171,7 +171,7 @@ MethodTitle *MethodTitleSemanticAction(char *title, MethodList *methods)
 	return methodTitle;
 }
 
-ParamsTitle *ParamsTitleSemanticAction(char *title, ParamsList *params)
+ParamsTitle *ParamsTitleSemanticAction(Token title, ParamsList *params)
 {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	ParamsTitle *paramsTitle = calloc(1, sizeof(ParamsTitle));
@@ -180,7 +180,7 @@ ParamsTitle *ParamsTitleSemanticAction(char *title, ParamsList *params)
 	return paramsTitle;
 }
 
-VariablesTitle *VariablesTitleSemanticAction(char *title, VariableList *variables)
+VariablesTitle *VariablesTitleSemanticAction(Token title, VariableList *variables)
 {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	VariablesTitle *variablesTitle = calloc(1, sizeof(VariablesTitle));
@@ -189,7 +189,7 @@ VariablesTitle *VariablesTitleSemanticAction(char *title, VariableList *variable
 	return variablesTitle;
 }
 
-RelatedTitle *RelatedTitleSemanticAction(char *title, RelatedList *related)
+RelatedTitle *RelatedTitleSemanticAction(Token title, RelatedList *related)
 {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	RelatedTitle *relatedTitle = calloc(1, sizeof(RelatedTitle));
@@ -198,7 +198,7 @@ RelatedTitle *RelatedTitleSemanticAction(char *title, RelatedList *related)
 	return relatedTitle;
 }
 
-StyleTitle *StyleTitleSemanticAction(char *title, Style *style)
+StyleTitle *StyleTitleSemanticAction(Token title, Style *style)
 {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	StyleTitle *styleTitle = calloc(1, sizeof(StyleTitle));

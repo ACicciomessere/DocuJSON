@@ -95,17 +95,8 @@ void releaseMethods(MethodTitle *methods)
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (methods != NULL)
 	{
-		releaseMethodTitle(methods->title);
 		releaseMethodList(methods->methods);
 		free(methods);
-	}
-}
-void releaseMethodTitle(Titles *title)
-{
-	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
-	if (title != NULL)
-	{
-		free(title);
 	}
 }
 
@@ -136,21 +127,9 @@ void releaseMethodContent(MethodContent *content)
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (content != NULL)
 	{
-		releaseParamsTitle(content->params);
 		free(content->description);
 		free(content->type);
-		releaseRelatedTitle(content->related);
-		releaseVariablesTitle(content->variables);
 		free(content);
-	}
-}
-
-void releaseParamsTitle(Titles *title)
-{
-	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
-	if (title != NULL)
-	{
-		free(title);
 	}
 }
 
@@ -187,15 +166,6 @@ void releaseParamData(ParamData *data)
 	}
 }
 
-void releaseRelatedTitle(Titles *title)
-{
-	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
-	if (title != NULL)
-	{
-		free(title);
-	}
-}
-
 void releaseRelatedList(RelatedList *related)
 {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
@@ -207,21 +177,11 @@ void releaseRelatedList(RelatedList *related)
 	}
 }
 
-void releaseVariablesTitle(Titles *title)
-{
-	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
-	if (title != NULL)
-	{
-		free(title);
-	}
-}
-
 void releaseVariablesList(VariableList *variables)
 {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (variables != NULL)
 	{
-		free(variables->variable);
 		releaseVariablesList(variables->next);
 		free(variables);
 	}
@@ -248,21 +208,11 @@ void releaseVariableData(VariableData *data)
 	}
 }
 
-void releaseStyleTitle(Titles *title)
-{
-	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
-	if (title != NULL)
-	{
-		free(title);
-	}
-}
-
 void releaseStyle(Style *style)
 {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (style != NULL)
 	{
-		free(style->title);
 		free(style->description);
 		free(style);
 	}
