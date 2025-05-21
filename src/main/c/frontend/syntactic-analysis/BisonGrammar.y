@@ -73,7 +73,8 @@
 /** Non-terminals. */
 %type <param_data> param_data
 %type <variable_data> variable_data
-%type <style_content> style_content
+%type <style_content> method_style_content
+%type <style_content> variables_style_content
 
 %type <Program> program
 
@@ -107,8 +108,13 @@
 // IMPORTANT: To use λ in the following grammar, use the %empty symbol.
 
 program:
-	OPEN_BRACES methods COMMA style CLOSE_BRACES		{$$ = ProgramSemanticAction(currentCompilerState(), $2, $4);}
-	| OPEN_BRACES methods CLOSE_BRACES		{$$ = ProgramSemanticAction(currentCompilerState(), $2, NULL);}
+	OPEN_BRACES methods[met] COMMA variables[var] COMMA style[sty] CLOSE_BRACES		{$$ = ProgramSemanticAction(currentCompilerState(), $met, $var, $sty);}
+	| OPEN_BRACES methods[met] COMMA style[sty] CLOSE_BRACES						{$$ = ProgramSemanticAction(currentCompilerState(), $met, NULL, $sty);}
+	| OPEN_BRACES variables[var] COMMA style[sty] CLOSE_BRACES						{$$ = ProgramSemanticAction(currentCompilerState(), NULL, $var, $sty);}
+	| OPEN_BRACES methods[met] COMMA variables[var] CLOSE_BRACES 					{$$ = ProgramSemanticAction(currentCompilerState(), $met, $var, NULL);}
+	| OPEN_BRACES methods[met] CLOSE_BRACES											{$$ = ProgramSemanticAction(currentCompilerState(), $met, NULL, NULL);}
+	| OPEN_BRACES variables[var] CLOSE_BRACES										{$$ = ProgramSemanticAction(currentCompilerState(), NULL, $var, NULL);}
+
 	;
 
 methods:
@@ -182,12 +188,21 @@ variable_data:
 	;
 
 style:
-	STYLE COLON OPEN_BRACES style_content CLOSE_BRACES		{$$ = StyleTitleSemanticAction($1, $4);}
+	STYLE COLON OPEN_BRACES method_style_content[met] COMMA variables_style_content[var] CLOSE_BRACES		{$$ = StyleTitleSemanticAction($1, $met, $var);}
+	| STYLE COLON OPEN_BRACES method_style_content[met] CLOSE_BRACES										{$$ = StyleTitleSemanticAction($1, $met, NULL);}
+	| STYLE COLON OPEN_BRACES variables_style_content[var] CLOSE_BRACES										{$$ = StyleTitleSemanticAction($1, NULL, $var);}
 	;
 
-style_content:
-	%empty {$$ = NULL;}
-	| METHODS COLON  OPEN_BRACES  TITLE COLON STRING[title] COMMA DESCRIPTION COLON STRING[desc] CLOSE_BRACES		{$$ = StyleSemanticAction($title,$desc);}
+method_style_content:
+	METHODS COLON OPEN_BRACES TITLE COLON STRING[title] COMMA DESCRIPTION COLON STRING[desc] CLOSE_BRACES		{$$ = StyleSemanticAction($title,$desc);}
+	| METHODS COLON  OPEN_BRACES TITLE COLON STRING[title] CLOSE_BRACES											{$$ = StyleSemanticAction($title,NULL);}
+	| METHODS COLON  OPEN_BRACES DESCRIPTION COLON STRING[desc] CLOSE_BRACES									{$$ = StyleSemanticAction(NULL,$desc);}
+	;
+
+variables_style_content:
+	VARIABLES COLON  OPEN_BRACES TITLE COLON STRING[title] COMMA DESCRIPTION COLON STRING[desc] CLOSE_BRACES		{$$ = StyleSemanticAction($title,$desc);}
+	| VARIABLES COLON  OPEN_BRACES TITLE COLON STRING[title] CLOSE_BRACES											{$$ = StyleSemanticAction($title,NULL);}
+	| VARIABLES COLON  OPEN_BRACES DESCRIPTION COLON STRING[desc] CLOSE_BRACES										{$$ = StyleSemanticAction(NULL,$desc);}
 	;
 
 %%

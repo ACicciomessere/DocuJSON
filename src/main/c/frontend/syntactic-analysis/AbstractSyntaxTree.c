@@ -83,16 +83,6 @@ void releaseStyle(Style *style);
 void releaseProgram(Program *program)
 {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
-	// if (program != NULL)
-	// {
-	// 	if (program->methods->methods != NULL)
-	// 		releaseMethodList(program->methods->methods);
-	// 	free(program->methods);
-	// 	if (program->style->style != NULL)
-	// 		releaseStyle(program->style->style);
-	// 	free(program->style);
-	// 	free(program);
-	// }
 	if (program == NULL)
 		return;
 
@@ -101,9 +91,15 @@ void releaseProgram(Program *program)
 		releaseMethodList(program->methods->methods);
 		free(program->methods);
 	}
+	if (program->variables != NULL)
+	{
+		releaseVariablesList(program->variables->variables);
+		free(program->variables);
+	}
 	if (program->style != NULL)
 	{
-		releaseStyle(program->style->style);
+		releaseStyle(program->style->method_style);
+		releaseStyle(program->style->variable_style);
 		free(program->style);
 	}
 	free(program);

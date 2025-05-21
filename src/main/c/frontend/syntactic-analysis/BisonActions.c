@@ -34,11 +34,12 @@ static void _logSyntacticAnalyzerAction(const char *functionName)
 }
 
 /* PUBLIC FUNCTIONS */
-Program *ProgramSemanticAction(CompilerState *compilerState, MethodTitle *methods, StyleTitle *style)
+Program *ProgramSemanticAction(CompilerState *compilerState, MethodTitle *methods, VariablesTitle *variables, StyleTitle *style)
 {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Program *program = calloc(1, sizeof(Program));
 	program->methods = methods;
+	program->variables = variables;
 	program->style = style;
 	compilerState->abstractSyntaxtTree = program;
 	if (0 < flexCurrentContext())
@@ -198,11 +199,12 @@ RelatedTitle *RelatedTitleSemanticAction(Token title, RelatedList *related)
 	return relatedTitle;
 }
 
-StyleTitle *StyleTitleSemanticAction(Token title, Style *style)
+StyleTitle *StyleTitleSemanticAction(Token title, Style *method_style, Style *variable_style)
 {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	StyleTitle *styleTitle = calloc(1, sizeof(StyleTitle));
 	styleTitle->title = title;
-	styleTitle->style = style;
+	styleTitle->method_style = method_style;
+	styleTitle->variable_style = variable_style;
 	return styleTitle;
 }

@@ -18,8 +18,7 @@ void shutdownBisonActionsModule();
  * Bison semantic actions.
  */
 
-Program *ProgramSemanticAction(CompilerState *compilerState, MethodTitle *methods, StyleTitle *style);
-char *echoString(char *string);
+Program *ProgramSemanticAction(CompilerState *compilerState, MethodTitle *methods, VariablesTitle *variables, StyleTitle *style);
 
 MethodTitle *MethodTitleSemanticAction(Token title, MethodList *methods);
 MethodList *MethodListSemanticAction(Method *method, MethodList *methods);
@@ -39,7 +38,7 @@ VariableList *VariableListSemanticAction(Variable *variable, VariableList *varia
 Variable *VariableSemanticAction(char *name, VariableData *data);
 VariableData *VariableDataSemanticAction(char *type, char *description);
 
-StyleTitle *StyleTitleSemanticAction(Token title, Style *style);
+StyleTitle *StyleTitleSemanticAction(Token title, Style *method_style, Style *variable_style);
 Style *StyleSemanticAction(char *name, char *value);
 
 #endif

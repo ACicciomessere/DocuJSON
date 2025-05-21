@@ -46,6 +46,7 @@ typedef struct Style Style;
 struct Program
 {
 	MethodTitle *methods;
+	VariablesTitle *variables;
 	StyleTitle *style;
 };
 
@@ -66,15 +67,6 @@ struct Method
 	char *name;
 	MethodContent *content;
 };
-
-// struct MethodContent
-// {
-// 	ParamsList *params;
-// 	char *description;
-// 	char *type;
-// 	RelatedList *related;
-// 	VariableList *variables;
-// };
 
 struct MethodContent
 {
@@ -150,7 +142,8 @@ struct VariableData
 struct StyleTitle
 {
 	Token title;
-	Style *style;
+	Style *method_style;
+	Style *variable_style;
 };
 
 struct Style
