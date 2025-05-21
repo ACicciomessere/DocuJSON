@@ -1,0 +1,32 @@
+{
+    METHODS: {
+        "nombreMethod": {
+            PARAMS: {
+                "nombreParam": {
+                    TYPE: "string",
+                    DESCRIPTION: "description"
+                }
+            },
+            DESCRIPTION: "description",
+            TYPE: "void",
+            VARIABLES: {
+                "nombreVariable": {
+                    TYPE: "string",
+                    DESCRIPTION: "description"
+                }
+            }
+        }
+    },
+    VARIABLES:{
+      "nombreVariable":{
+        TYPE: "tipoVariable",
+        DESCRIPTION: "descripción"
+      }
+    },
+    style: {
+        METHODS: {
+            TITILE: "formato de estilo",
+            DESCRIPTION: "formato de estilo"
+        }
+    }
+}

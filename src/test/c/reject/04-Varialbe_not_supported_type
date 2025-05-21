@@ -1,8 +1,0 @@
-{
-  variables: {
-    "config": {
-      type: "array",
-      description: "An array of configuration options."
-    }
-  }
-}

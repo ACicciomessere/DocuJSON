@@ -1,0 +1,8 @@
+{
+  style: {
+    methods: {
+      title: "formato",
+      description: "formato"
+    }
+  }
+}

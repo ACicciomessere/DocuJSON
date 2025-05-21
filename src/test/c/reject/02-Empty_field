@@ -10,5 +10,6 @@
       description: "Processes the input data.",
       type: "float"
     }
-  }
+  },
+  style: {}
 }

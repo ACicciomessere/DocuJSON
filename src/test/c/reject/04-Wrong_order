@@ -1,4 +1,10 @@
 {
+    style: {
+        methods: {
+            title: "formato de estilo",
+            description: "formato de estilo"
+        }
+    },
     methods: {
         "nombreMethod": {
             params: {
@@ -15,27 +21,11 @@
                 "nombreMethod2"
             ],
             variables: {
-                "nombreVariableInterna": {
+                "nombreVariable": {
                     type: "string",
                     description: "description"
                 }
             }
-        }
-    },
-    variables:{
-      "nombreVariableGlobal":{
-        type: "tipoVariable",
-        description: "descripción"
-      }
-    },
-    style: {
-        methods: {
-            title: "formato de estilo",
-            description: "formato de estilo"
-        }, 
-        variables: {
-            title: "formato de estulo",
-            description: "formato de estilo"
         }
     }
 }
