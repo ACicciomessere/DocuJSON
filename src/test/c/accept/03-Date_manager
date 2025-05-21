@@ -67,12 +67,13 @@
                     description: "Parsed day as number."
                 }
             }
-        },
-        style: {
-            methods: {
-                title: "color: navy, font-size: 28px",
-                description: "color: darkslategray, font-size: 16px"
-            }
+        }
+    },
+    style: {
+        methods: {
+            title: "color: navy, font-size: 28px",
+            description: "color: darkslategray, font-size: 16px"
         }
     }
+    
 }

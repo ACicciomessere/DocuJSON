@@ -15,6 +15,7 @@
  * @see https://westes.github.io/flex/manual/Start-Conditions.html
  */
 %x MULTILINE_COMMENT
+%x STRING_REGION
 
 /**
  * Reusable patterns.
@@ -22,15 +23,7 @@
  * @see https://westes.github.io/flex/manual/Matching.html
  * @see https://westes.github.io/flex/manual/Patterns.html
  */
-DIGIT           [0-9]
-LETTER          [a-zA-Z]
-UNDERSCORE      [_]
-IDENTIFIER      ({LETTER}|{UNDERSCORE})({LETTER}|{DIGIT}|{UNDERSCORE})*
-INTEGER         {DIGIT}+
-FLOAT           {DIGIT}+\.{DIGIT}+
-STRING_CHAR     [^"\\]
-ESCAPE_CHAR     \\[\"\\nrtbf/]
-STRING_CONTENT  ({STRING_CHAR}|{ESCAPE_CHAR})*
+
 
 %%
 
@@ -40,22 +33,20 @@ STRING_CONTENT  ({STRING_CHAR}|{ESCAPE_CHAR})*
 <MULTILINE_COMMENT>[^*]+			{ IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 <MULTILINE_COMMENT>.				{ IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
-
-"//".*\n						    { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
-
-
-"{"									{ return ParenthesisLexemeAction(createLexicalAnalyzerContext(), OPEN_BRACES); }
-"}"									{ return ParenthesisLexemeAction(createLexicalAnalyzerContext(), CLOSE_BRACES); }
-"["                                 { return ParenthesisLexemeAction(createLexicalAnalyzerContext(), OPEN_BRACKET); }
-"]"                                 { return ParenthesisLexemeAction(createLexicalAnalyzerContext(), CLOSE_BRACKET); }
-"("									{ return ParenthesisLexemeAction(createLexicalAnalyzerContext(), OPEN_PAREN); }
-")"									{ return ParenthesisLexemeAction(createLexicalAnalyzerContext(), CLOSE_PAREN); }
-":"									{ return ParenthesisLexemeAction(createLexicalAnalyzerContext(), COLON); }
-","                                 { return ParenthesisLexemeAction(createLexicalAnalyzerContext(), QUOTE); }
+"\""											{ BEGIN(STRING_REGION); BeginStringLexemeAction(createLexicalAnalyzerContext()); }
+<STRING_REGION>"\""									{ EndStringLexemeAction(createLexicalAnalyzerContext()); BEGIN(INITIAL); }
+<STRING_REGION>[^"\n]*									{ return StringLexemeAction(createLexicalAnalyzerContext(), STRING); }
 
 
+
+
+"{"									{ return KeywordLexemeAction(createLexicalAnalyzerContext(), OPEN_BRACES); }
+"}"									{ return KeywordLexemeAction(createLexicalAnalyzerContext(), CLOSE_BRACES); }
+"["                                 { return KeywordLexemeAction(createLexicalAnalyzerContext(), OPEN_BRACKET); }
+"]"                                 { return KeywordLexemeAction(createLexicalAnalyzerContext(), CLOSE_BRACKET); }
+":"									{ return KeywordLexemeAction(createLexicalAnalyzerContext(), COLON); }
+","                                 { return KeywordLexemeAction(createLexicalAnalyzerContext(), COMMA); }
 "methods"							{ return KeywordLexemeAction(createLexicalAnalyzerContext(), METHODS); }
-"method"							{ return KeywordLexemeAction(createLexicalAnalyzerContext(), METHOD); }
 "params"							{ return KeywordLexemeAction(createLexicalAnalyzerContext(), PARAMS); }
 "description"						{ return KeywordLexemeAction(createLexicalAnalyzerContext(), DESCRIPTION); }
 "type"							    { return KeywordLexemeAction(createLexicalAnalyzerContext(), TYPE); }
@@ -64,24 +55,14 @@ STRING_CONTENT  ({STRING_CHAR}|{ESCAPE_CHAR})*
 "range"							    { return KeywordLexemeAction(createLexicalAnalyzerContext(), RANGE); }
 "regex"							    { return KeywordLexemeAction(createLexicalAnalyzerContext(), REGEX); }
 "related"							{ return KeywordLexemeAction(createLexicalAnalyzerContext(), RELATED); }
+"variables"							{ return KeywordLexemeAction(createLexicalAnalyzerContext(), VARIABLES); }
 
-
-"true"								{ return KeywordLexemeAction(createLexicalAnalyzerContext(), TRUE); }
-"false"								{ return KeywordLexemeAction(createLexicalAnalyzerContext(), FALSE); }
-"null"								{ return KeywordLexemeAction(createLexicalAnalyzerContext(), NULL_VALUE); }
-
-
-{FLOAT}                             { return NumberLexemeAction(createLexicalAnalyzerContext(), FLOAT_NUMBER); }
-{INTEGER}                           { return NumberLexemeAction(createLexicalAnalyzerContext(), INTEGER_NUMBER); }
-
-
-\"{STRING_CONTENT}\"                { return StringLexemeAction(createLexicalAnalyzerContext(), STRING); }
-
-
-{IDENTIFIER}                        { return IdentifierLexemeAction(createLexicalAnalyzerContext(), IDENTIFIER); }
 
 
 [[:space:]]+						{ IgnoredLexemeAction(createLexicalAnalyzerContext()); }
+"//".*\n						    { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
+
+.                                   { return UnknownLexemeAction(createLexicalAnalyzerContext()); }
 
 
 

@@ -11,9 +11,6 @@
 	/** Terminals. */
 	Token token;
 	char * string;
-	ParamData * param_data;
-	VariableData * variable_data;
-	Style * style_content;
 
 	/** Non-terminals. */
 	Program * Program;
@@ -26,15 +23,18 @@
 	ParamsTitle * params;
 	ParamsList * params_list;
 	Param * param;
+	ParamData * param_data;
 
 	VariablesTitle * variables;
 	VariableList * variable_list;
 	Variable * variable;
+	VariableData * variable_data;
 
 	RelatedTitle * related;
 	RelatedList * related_list;
 
 	StyleTitle * style;
+	Style * style_content;
 }
 
 /**
@@ -50,7 +50,7 @@
 %destructor { releaseFactor($$); } <factor> */
 
 /** Terminals. */
-%token <token> METHOD
+%token <token> METHODS
 %token <token> STYLE
 %token <token> PARAMS
 %token <token> RANGE
@@ -66,25 +66,15 @@
 %token <token> COMMA
 %token <token> TITLE
 %token <token> VARIABLES
-
-%token <token> OPEN_PAREN CLOSE_PAREN
-%token <token> TRUE FALSE NULL_VALUE
-%token <token> QUOTE
-%token <token> METHODS 
-/* ??????????????????????????????????????*/
 %token <string> STRING
 
-/* ?????????????????????????????' ' */
-%type <param_data> param_data
-%type <variable_data> variable_data
-%type <string> description
-%type <string> type
-%type <string> regex
-%type <string> range
-%type <string> title
-%type <style_content> style_content
+%token <token> UNKNOWN
 
 /** Non-terminals. */
+%type <param_data> param_data
+%type <variable_data> variable_data
+%type <style_content> style_content
+
 %type <Program> program
 
 %type <methods> methods
@@ -118,14 +108,16 @@
 
 program:
 	OPEN_BRACES methods COMMA style CLOSE_BRACES		{$$ = ProgramSemanticAction(currentCompilerState(), $2, $4);}
+	| OPEN_BRACES methods CLOSE_BRACES		{$$ = ProgramSemanticAction(currentCompilerState(), $2, NULL);}
 	;
 
 methods:
-	METHOD COLON OPEN_BRACES method_list CLOSE_BRACES	{$$ = MethodTitleSemanticAction($1, $4);}
+	METHODS COLON OPEN_BRACES method_list CLOSE_BRACES	{$$ = MethodTitleSemanticAction($1, $4);}
 	;
 
 method_list:
-	method							{$$ = MethodListSemanticAction($1, NULL);}
+	%empty							{$$ = NULL;}	
+	| method						{$$ = MethodListSemanticAction($1, NULL);}
 	| method COMMA method_list		{$$ = MethodListSemanticAction($1, $3);}
 	;
 
@@ -134,7 +126,10 @@ method:
 	;
 
 method_content:
-	params COMMA description COMMA type COMMA related COMMA variables	{$$ = MethodContentSemanticAction($1, $3, $5, $7, $9);}
+	params COMMA DESCRIPTION COLON STRING[desc] COMMA TYPE COLON STRING[type] COMMA related[rel] COMMA variables[var]	{$$ = MethodContentSemanticAction($1, $desc, $type, $rel, $var);}
+	| params COMMA DESCRIPTION COLON STRING[desc] COMMA TYPE COLON STRING[type] COMMA related[rel]	{$$ = MethodContentSemanticAction($1, $desc, $type, $rel, NULL);}
+	| params COMMA DESCRIPTION COLON STRING[desc] COMMA TYPE COLON STRING[type] COMMA variables[var]	{$$ = MethodContentSemanticAction($1, $desc, $type, NULL, $var);}
+	| params COMMA DESCRIPTION COLON STRING[desc] COMMA TYPE COLON STRING[type]	{$$ = MethodContentSemanticAction($1, $desc, $type, NULL, NULL);}
 	;
 
 params:
@@ -152,7 +147,10 @@ param:
 	;
 
 param_data:
-	type COMMA regex COMMA range COMMA description			{$$ = ParamDataSemanticAction($1, $3, $5, $7);}
+	TYPE COLON STRING[type] COMMA REGEX COLON STRING[regex] COMMA RANGE COLON STRING[range] COMMA DESCRIPTION COLON STRING[desc]			{$$ = ParamDataSemanticAction($type, $regex, $range, $desc);}
+	| TYPE COLON STRING[type] COMMA RANGE COLON STRING[range] COMMA DESCRIPTION COLON STRING[desc]			{$$ = ParamDataSemanticAction($type, NULL, $range, $desc);}
+	| TYPE COLON STRING[type] COMMA REGEX COLON STRING[regex] COMMA DESCRIPTION COLON STRING[desc]			{$$ = ParamDataSemanticAction($type, $regex, NULL, $desc);}
+	| TYPE COLON STRING[type] COMMA DESCRIPTION COLON STRING[desc]			{$$ = ParamDataSemanticAction($type, NULL, NULL, $desc);}
 	;
 
 related:
@@ -180,7 +178,7 @@ variable:
 	;
 
 variable_data:
-	type COMMA description  { $$ = VariableDataSemanticAction($1, $3); }
+	TYPE COLON STRING[type] COMMA DESCRIPTION COLON STRING[desc]  { $$ = VariableDataSemanticAction($type, $desc); }
 	;
 
 style:
@@ -188,31 +186,8 @@ style:
 	;
 
 style_content:
-	METHOD COLON title COMMA description		{$$ = StyleSemanticAction($3,$5 );}
+	%empty {$$ = NULL;}
+	| METHODS COLON  OPEN_BRACES  TITLE COLON STRING[title] COMMA DESCRIPTION COLON STRING[desc] CLOSE_BRACES		{$$ = StyleSemanticAction($title,$desc);}
 	;
-
-/* name: value*/
-
-description:
-	DESCRIPTION COLON STRING		{$$ = echoString($3);}
-	;	
-
-type:
-	TYPE COLON STRING			{$$ = echoString($3);}	
-	;
-
-regex:
-	REGEX COLON STRING			{$$ = echoString($3);}
-	;
-
-range:
-	/* RANGE COLON OPEN_BRACKET STRING COMMA STRING CLOSE_BRACKET */
-	RANGE COLON STRING 			{$$ = echoString($3);}
-	;
-
-title:
-	TITLE COLON STRING			{$$ = echoString($3);}	
-	;
-
 
 %%

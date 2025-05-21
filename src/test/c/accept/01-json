@@ -5,10 +5,7 @@
                 "nombreParam": {
                     type: "string",
                     regex: "^[a-zA-Z0-9]+$",
-                    range: [
-                        0,
-                        100
-                    ],
+                    range: "[0,100]",
                     description: "description"
                 }
             },

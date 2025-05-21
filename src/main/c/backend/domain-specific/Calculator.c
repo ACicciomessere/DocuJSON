@@ -1,18 +1,21 @@
-// #include "Calculator.h"
+#include "Calculator.h"
 
-// /* MODULE INTERNAL STATE */
+/* MODULE INTERNAL STATE */
 
-// static Logger * _logger = NULL;
+static Logger *_logger = NULL;
 
-// void initializeCalculatorModule() {
-// 	_logger = createLogger("Calculator");
-// }
+void initializeCalculatorModule()
+{
+    _logger = createLogger("Calculator");
+}
 
-// void shutdownCalculatorModule() {
-// 	if (_logger != NULL) {
-// 		destroyLogger(_logger);
-// 	}
-// }
+void shutdownCalculatorModule()
+{
+    if (_logger != NULL)
+    {
+        destroyLogger(_logger);
+    }
+}
 
 // /** PRIVATE FUNCTIONS */
 

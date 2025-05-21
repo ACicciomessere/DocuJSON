@@ -83,21 +83,30 @@ void releaseStyle(Style *style);
 void releaseProgram(Program *program)
 {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
-	if (program != NULL)
-	{
-		releaseMethods(program->methods);
-		free(program);
-	}
-}
+	// if (program != NULL)
+	// {
+	// 	if (program->methods->methods != NULL)
+	// 		releaseMethodList(program->methods->methods);
+	// 	free(program->methods);
+	// 	if (program->style->style != NULL)
+	// 		releaseStyle(program->style->style);
+	// 	free(program->style);
+	// 	free(program);
+	// }
+	if (program == NULL)
+		return;
 
-void releaseMethods(MethodTitle *methods)
-{
-	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
-	if (methods != NULL)
+	if (program->methods != NULL)
 	{
-		releaseMethodList(methods->methods);
-		free(methods);
+		releaseMethodList(program->methods->methods);
+		free(program->methods);
 	}
+	if (program->style != NULL)
+	{
+		releaseStyle(program->style->style);
+		free(program->style);
+	}
+	free(program);
 }
 
 void releaseMethodList(MethodList *methods)
@@ -116,8 +125,8 @@ void releaseMethod(Method *method)
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (method != NULL)
 	{
-		releaseMethodContent(method->content);
 		free(method->name);
+		releaseMethodContent(method->content);
 		free(method);
 	}
 }
@@ -127,8 +136,26 @@ void releaseMethodContent(MethodContent *content)
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (content != NULL)
 	{
+		if (content->params != NULL)
+		{
+			releaseParamsList(content->params->params);
+			free(content->params);
+		}
 		free(content->description);
 		free(content->type);
+
+		if (content->related != NULL)
+		{
+			releaseRelatedList(content->related->related);
+			free(content->related);
+		}
+
+		if (content->variables != NULL)
+		{
+			releaseVariablesList(content->variables->variables);
+			free(content->variables);
+		}
+
 		free(content);
 	}
 }
@@ -149,8 +176,8 @@ void releaseParam(Param *param)
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (param != NULL)
 	{
-		releaseParamData(param->data);
 		free(param->name);
+		releaseParamData(param->data);
 		free(param);
 	}
 }
@@ -162,6 +189,8 @@ void releaseParamData(ParamData *data)
 	{
 		free(data->type);
 		free(data->regex);
+		free(data->range);
+		free(data->description);
 		free(data);
 	}
 }
@@ -182,6 +211,7 @@ void releaseVariablesList(VariableList *variables)
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (variables != NULL)
 	{
+		releaseVariable(variables->variable);
 		releaseVariablesList(variables->next);
 		free(variables);
 	}
@@ -213,6 +243,7 @@ void releaseStyle(Style *style)
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (style != NULL)
 	{
+		free(style->title);
 		free(style->description);
 		free(style);
 	}

@@ -52,7 +52,7 @@
                 }
             },
             description: "Returns the multiplicative inverse of a number.",
-            type: number
+            type: "number"
         },
         "divide": {
             params: {
