@@ -1,5 +1,5 @@
 #include "backend/code-generation/Generator.h"
-#include "backend/domain-specific/Calculator.h"
+#include "backend/domain-specific/DocuJSON.h"
 #include "frontend/lexical-analysis/FlexActions.h"
 #include "frontend/syntactic-analysis/AbstractSyntaxTree.h"
 #include "frontend/syntactic-analysis/BisonActions.h"
@@ -21,6 +21,7 @@ const int main(const int count, const char **arguments)
 	initializeBisonActionsModule();
 	initializeSyntacticAnalyzerModule();
 	initializeAbstractSyntaxTreeModule();
+	initializeDocuJSONModule();
 	// initializeCalculatorModule();
 	initializeGeneratorModule();
 
@@ -42,18 +43,20 @@ const int main(const int count, const char **arguments)
 	{
 		// ----------------------------------------------------------------------------------------
 		// Beginning of the Backend... ------------------------------------------------------------
-		// logDebugging(logger, "Computing expression value...");
-		// ComputationResult computationResult = computeExpression(program->expression);
-		// if (computationResult.succeed)
-		// {
-		// compilerState.value = computationResult.value;
-		generate(&compilerState);
-		// }
-		// else
-		// {
-		// 	logError(logger, "The computation phase rejects the input program.");
-		// 	compilationStatus = FAILED;
-		// }
+		logDebugging(logger, "Computing expression value...");
+		ValidationConfig validationConfig = createDefaultValidationConfig();
+		ValidationResult validationResult = validateProgram(program, &validationConfig);
+		if (validationResult.succeed)
+		{
+			generate(&compilerState);
+		}
+		else
+		{
+			logError(logger, "The computation phase rejects the input program.");
+			compilationStatus = FAILED;
+		}
+		// Liberar el ValidationResult
+		releaseValidationResult(&validationResult);
 		// ...end of the Backend. -----------------------------------------------------------------
 		// ----------------------------------------------------------------------------------------
 	}
@@ -67,6 +70,7 @@ const int main(const int count, const char **arguments)
 	logDebugging(logger, "Releasing modules resources...");
 	shutdownGeneratorModule();
 	// shutdownCalculatorModule();
+	shutdownDocuJSONModule();
 	shutdownAbstractSyntaxTreeModule();
 	shutdownSyntacticAnalyzerModule();
 	shutdownBisonActionsModule();
