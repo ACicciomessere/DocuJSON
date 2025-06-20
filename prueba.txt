@@ -11,12 +11,25 @@
             },
             description: "description",
             type: "void",
+            related: [
+                "method2", "method3"
+            ],
             variables: {
                 "nombreVariableInterna": {
                     type: "string",
                     description: "description"
                 }
             }
+        },
+        "method2": {
+            params:{},
+            description: "esta es la descripción",
+            type: "tipo"
+        },
+        "method3": {
+            params:{},
+            description: "esta es la descripción",
+            type: "tipo"
         }
     },
     variables:{
@@ -27,8 +40,8 @@
     },
     style: {
         methods: {
-            title: "formato de estilo",
-            description: "formato de estilo"
+            title: "color: green",
+            description: "color: blue"
         }, 
         variables: {
             title: "formato de estulo",

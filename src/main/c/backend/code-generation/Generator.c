@@ -27,7 +27,7 @@ static void _generateEpilogue();
 // static void _generateExpression(const unsigned int indentationLevel, Expression *expression);
 // static void _generateFactor(const unsigned int indentationLevel, Factor *factor);
 static void _generateProgram(Program *program);
-static void _generateMethod(Method *method, unsigned int indent);
+static void _generateMethod(Method *method, unsigned int indent, char *mts, char *mds);
 static void _generateVariables(VariablesTitle *varsTitle, unsigned int indent);
 static void _generatePrologue(void);
 static char *_indentation(const unsigned int indentationLevel);
@@ -125,14 +125,34 @@ static void _generateEpilogue()
  */
 static void _generateProgram(Program *program)
 {
+    char *style_method_title;
+    char *style_method_desc;
+    Style *style_variable_title;
+    Style *style_variable_desc;
+
+    if (program->style)
+    {
+        if (program->style->method_style)
+        {
+            style_method_title = program->style->method_style->title;
+            style_method_desc = program->style->method_style->description;
+        }
+        if (program->style->variable_style)
+        {
+            style_variable_title = program->style->variable_style->title;
+            style_variable_desc = program->style->variable_style->description;
+        }
+    }
+
     if (program->methods)
     {
         _output(2, "<div>\n");
         _output(3, "<h1>Métodos</h1>\n");
         MethodList *ml = program->methods->methods;
+
         while (ml)
         {
-            _generateMethod(ml->method, 3);
+            _generateMethod(ml->method, 3, style_method_title, style_method_desc);
             ml = ml->next;
         }
         _output(2, "</div>\n");
@@ -144,12 +164,12 @@ static void _generateProgram(Program *program)
     }
 }
 
-static void _generateMethod(Method *method, unsigned int indent)
+static void _generateMethod(Method *method, unsigned int indent, char *mts, char *mds)
 {
     MethodContent *c = method->content;
-    _output(indent, "<div>\n");
-    _output(indent + 1, "<h2>%s</h2>\n", method->name);
-    _output(indent + 1, "<p><strong>Descripción:</strong> %s</p>\n", c->description);
+    _output(indent, "<div id=\"%s\">\n", method->name);
+    _output(indent + 1, "<h2 style=\"%s;\">%s</h2>\n", mts, method->name);
+    _output(indent + 1, "<p style=\"%s;\">%s</p>\n", mds, c->description);
     _output(indent + 1, "<p><strong>Tipo:</strong> %s</p>\n", c->type);
 
     // Parámetros
