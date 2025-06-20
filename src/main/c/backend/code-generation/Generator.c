@@ -23,10 +23,12 @@ void shutdownGeneratorModule()
 
 // static const char _expressionTypeToCharacter(const ExpressionType type);
 // static void _generateConstant(const unsigned int indentationLevel, Constant *constant);
-static void _generateEpilogue(const int value);
+static void _generateEpilogue();
 // static void _generateExpression(const unsigned int indentationLevel, Expression *expression);
 // static void _generateFactor(const unsigned int indentationLevel, Factor *factor);
 static void _generateProgram(Program *program);
+static void _generateMethod(Method *method, unsigned int indent);
+static void _generateVariables(VariablesTitle *varsTitle, unsigned int indent);
 static void _generatePrologue(void);
 static char *_indentation(const unsigned int indentationLevel);
 static void _output(const unsigned int indentationLevel, const char *const format, ...);
@@ -63,17 +65,10 @@ static void _output(const unsigned int indentationLevel, const char *const forma
 //     _output(indentationLevel, "%s", "]\n");
 // }
 
-/**
- * Creates the epilogue of the generated output, that is, the final lines that
- * completes a valid Latex document.
- */
-static void _generateEpilogue(const int value)
+static void _generateEpilogue()
 {
-    _output(0, "%s%d%s",
-            "            [ $", value, "$, circle, draw, blue ]\n"
-                                      "        ]\n"
-                                      "    \\end{forest}\n"
-                                      "\\end{document}\n\n");
+    _output(1, "</body>\n");
+    _output(0, "</html>\n");
 }
 
 /**
@@ -130,28 +125,125 @@ static void _generateEpilogue(const int value)
  */
 static void _generateProgram(Program *program)
 {
-    // _generateExpression(3, program->methods);
+    if (program->methods)
+    {
+        _output(2, "<div>\n");
+        _output(3, "<h1>Métodos</h1>\n");
+        MethodList *ml = program->methods->methods;
+        while (ml)
+        {
+            _generateMethod(ml->method, 3);
+            ml = ml->next;
+        }
+        _output(2, "</div>\n");
+    }
+
+    if (program->variables)
+    {
+        _generateVariables(program->variables, 2);
+    }
 }
 
-/**
- * Creates the prologue of the generated output, a Latex document that renders
- * a tree thanks to the Forest package.
- *
- * @see https://ctan.dcc.uchile.cl/graphics/pgf/contrib/forest/forest-doc.pdf
- */
+static void _generateMethod(Method *method, unsigned int indent)
+{
+    MethodContent *c = method->content;
+    _output(indent, "<div>\n");
+    _output(indent + 1, "<h2>%s</h2>\n", method->name);
+    _output(indent + 1, "<p><strong>Descripción:</strong> %s</p>\n", c->description);
+    _output(indent + 1, "<p><strong>Tipo:</strong> %s</p>\n", c->type);
+
+    // Parámetros
+    if (c->params && c->params->params)
+    {
+        _output(indent + 1, "<h3>Parámetros</h3>\n");
+        _output(indent + 1, "<ul>\n");
+        ParamsList *pl = c->params->params;
+        while (pl)
+        {
+            Param *p = pl->param;
+            ParamData *d = p->data;
+            _output(indent + 2, "<li>\n");
+            _output(indent + 3, "<strong>%s</strong>\n", p->name);
+            _output(indent + 3, "<ul>\n");
+            _output(indent + 4, "<li>Descripción: %s</li>\n", d->description);
+            _output(indent + 4, "<li>Tipo: %s</li>\n", d->type);
+            _output(indent + 4, "<li>Regex: %s</li>\n", d->regex);
+            _output(indent + 4, "<li>Rango: %s</li>\n", d->range);
+            _output(indent + 3, "</ul>\n");
+            _output(indent + 2, "</li>\n");
+            pl = pl->next;
+        }
+        _output(indent + 1, "</ul>\n");
+    }
+
+    // Variables internas
+    if (c->variables && c->variables->variables)
+    {
+        _output(indent + 1, "<h3>Variables Internas</h3>\n");
+        _output(indent + 1, "<ul>\n");
+        VariableList *vl = c->variables->variables;
+        while (vl)
+        {
+            Variable *v = vl->variable;
+            VariableData *d = v->data;
+            _output(indent + 2, "<li>\n");
+            _output(indent + 3, "<strong>%s</strong>\n", v->name);
+            _output(indent + 3, "<ul>\n");
+            _output(indent + 4, "<li>Descripción: %s</li>\n", d->description);
+            _output(indent + 4, "<li>Tipo: %s</li>\n", d->type);
+            _output(indent + 3, "</ul>\n");
+            _output(indent + 2, "</li>\n");
+            vl = vl->next;
+        }
+        _output(indent + 1, "</ul>\n");
+    }
+
+    // Métodos relacionados
+    if (c->related && c->related->related)
+    {
+        _output(indent + 1, "<h3>Métodos Relacionados</h3>\n");
+        _output(indent + 1, "<ul>\n");
+        RelatedList *rl = c->related->related;
+        while (rl)
+        {
+            _output(indent + 2, "<li><a href=\"#%s\">%s</a></li>\n", rl->name, rl->name);
+            rl = rl->next;
+        }
+        _output(indent + 1, "</ul>\n");
+    }
+
+    _output(indent, "</div>\n");
+}
+
+static void _generateVariables(VariablesTitle *varsTitle, unsigned int indent)
+{
+    _output(indent, "<div>\n");
+    _output(indent + 1, "<h1>Variables Globales</h1>\n");
+    _output(indent + 1, "<div class=\"variable\">\n");
+    VariableList *vl = varsTitle->variables;
+    while (vl)
+    {
+        Variable *v = vl->variable;
+        VariableData *d = v->data;
+        _output(indent + 2, "<h3>%s</h3>\n", v->name);
+        _output(indent + 2, "<p>Descripción: %s</p>\n", d->description);
+        _output(indent + 2, "<p>Tipo: %s</p>\n", d->type);
+        vl = vl->next;
+    }
+    _output(indent + 1, "</div>\n");
+    _output(indent, "</div>\n");
+}
+
 static void _generatePrologue(void)
 {
-    _output(0, "%s",
-            "\\documentclass{standalone}\n\n"
-            "\\usepackage[utf8]{inputenc}\n"
-            "\\usepackage[T1]{fontenc}\n"
-            "\\usepackage{amsmath}\n"
-            "\\usepackage{forest}\n"
-            "\\usepackage{microtype}\n\n"
-            "\\begin{document}\n"
-            "    \\centering\n"
-            "    \\begin{forest}\n"
-            "        [ \\text{$=$}, circle, draw, purple\n");
+    _output(0, "<!DOCTYPE html>\n");
+    _output(0, "<html lang=\"es\">\n");
+    _output(1, "<head>\n");
+    _output(2, "<meta charset=\"UTF-8\">\n");
+    _output(2, "<title>Documentación</title>\n");
+    _output(1, "</head>\n");
+    _output(1, "<body>\n");
+    _output(2, "<h1>Documentación</h1>\n");
 }
 
 /**
@@ -187,6 +279,6 @@ void generate(CompilerState *compilerState)
     logDebugging(_logger, "Generating final output...");
     _generatePrologue();
     _generateProgram(compilerState->abstractSyntaxtTree);
-    _generateEpilogue(compilerState->value);
+    _generateEpilogue();
     logDebugging(_logger, "Generation is done.");
 }

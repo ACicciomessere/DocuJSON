@@ -21,7 +21,7 @@ const int main(const int count, const char **arguments)
 	initializeBisonActionsModule();
 	initializeSyntacticAnalyzerModule();
 	initializeAbstractSyntaxTreeModule();
-	initializeCalculatorModule();
+	// initializeCalculatorModule();
 	initializeGeneratorModule();
 
 	// Logs the arguments of the application.
@@ -42,12 +42,12 @@ const int main(const int count, const char **arguments)
 	{
 		// ----------------------------------------------------------------------------------------
 		// Beginning of the Backend... ------------------------------------------------------------
-		logDebugging(logger, "Computing expression value...");
+		// logDebugging(logger, "Computing expression value...");
 		// ComputationResult computationResult = computeExpression(program->expression);
 		// if (computationResult.succeed)
 		// {
-		// 	compilerState.value = computationResult.value;
-		// 	generate(&compilerState);
+		// compilerState.value = computationResult.value;
+		generate(&compilerState);
 		// }
 		// else
 		// {
@@ -66,7 +66,7 @@ const int main(const int count, const char **arguments)
 	releaseProgram(program);
 	logDebugging(logger, "Releasing modules resources...");
 	shutdownGeneratorModule();
-	shutdownCalculatorModule();
+	// shutdownCalculatorModule();
 	shutdownAbstractSyntaxTreeModule();
 	shutdownSyntacticAnalyzerModule();
 	shutdownBisonActionsModule();
