@@ -6,7 +6,7 @@ const char _indentationCharacter = ' ';
 const char _indentationSize = 4;
 static Logger *_logger = NULL;
 
-static const char *default_style = "color: black;";
+static char *default_style = "color: black";
 
 void initializeGeneratorModule()
 {
@@ -23,49 +23,13 @@ void shutdownGeneratorModule()
 
 /** PRIVATE FUNCTIONS */
 
-// static const char _expressionTypeToCharacter(const ExpressionType type);
-// static void _generateConstant(const unsigned int indentationLevel, Constant *constant);
 static void _generateEpilogue();
-// static void _generateExpression(const unsigned int indentationLevel, Expression *expression);
-// static void _generateFactor(const unsigned int indentationLevel, Factor *factor);
 static void _generateProgram(Program *program);
 static void _generateMethod(Method *method, unsigned int indent, char *mtitle_style, char *mdesc_style);
 static void _generateVariables(VariablesTitle *varsTitle, unsigned int indent, char *vtitle_style, char *vdesc_style);
 static void _generatePrologue(void);
 static char *_indentation(const unsigned int indentationLevel);
 static void _output(const unsigned int indentationLevel, const char *const format, ...);
-
-/**
- * Converts and expression type to the proper character of the operation
- * involved, or returns '\0' if that's not possible.
- */
-// static const char _expressionTypeToCharacter(const ExpressionType type)
-// {
-//     switch (type)
-//     {
-//     case ADDITION:
-//         return '+';
-//     case DIVISION:
-//         return '/';
-//     case MULTIPLICATION:
-//         return '*';
-//     case SUBTRACTION:
-//         return '-';
-//     default:
-//         logError(_logger, "The specified expression type cannot be converted into character: %d", type);
-//         return '\0';
-//     }
-// }
-
-/**
- * Generates the output of a constant.
- */
-// static void _generateConstant(const unsigned int indentationLevel, Constant *constant)
-// {
-//     _output(indentationLevel, "%s", "[ $C$, circle, draw, black!20\n");
-//     _output(1 + indentationLevel, "%s%d%s", "[ $", constant->value, "$, circle, draw ]\n");
-//     _output(indentationLevel, "%s", "]\n");
-// }
 
 static void _generateEpilogue()
 {
@@ -74,75 +38,30 @@ static void _generateEpilogue()
 }
 
 /**
- * Generates the output of an expression.
- */
-// static void _generateExpression(const unsigned int indentationLevel, Expression *expression)
-// {
-//     _output(indentationLevel, "%s", "[ $E$, circle, draw, black!20\n");
-//     switch (expression->type)
-//     {
-//     case ADDITION:
-//     case DIVISION:
-//     case MULTIPLICATION:
-//     case SUBTRACTION:
-//         _generateExpression(1 + indentationLevel, expression->leftExpression);
-//         _output(1 + indentationLevel, "%s%c%s", "[ $", _expressionTypeToCharacter(expression->type), "$, circle, draw, purple ]\n");
-//         _generateExpression(1 + indentationLevel, expression->rightExpression);
-//         break;
-//     case FACTOR:
-//         _generateFactor(1 + indentationLevel, expression->factor);
-//         break;
-//     default:
-//         logError(_logger, "The specified expression type is unknown: %d", expression->type);
-//         break;
-//     }
-//     _output(indentationLevel, "%s", "]\n");
-// }
-
-/**
- * Generates the output of a factor.
- */
-// static void _generateFactor(const unsigned int indentationLevel, Factor *factor)
-// {
-//     _output(indentationLevel, "%s", "[ $F$, circle, draw, black!20\n");
-//     switch (factor->type)
-//     {
-//     case CONSTANT:
-//         _generateConstant(1 + indentationLevel, factor->constant);
-//         break;
-//     case EXPRESSION:
-//         _output(1 + indentationLevel, "%s", "[ $($, circle, draw, purple ]\n");
-//         _generateExpression(1 + indentationLevel, factor->expression);
-//         _output(1 + indentationLevel, "%s", "[ $)$, circle, draw, purple ]\n");
-//         break;
-//     default:
-//         logError(_logger, "The specified factor type is unknown: %d", factor->type);
-//         break;
-//     }
-//     _output(indentationLevel, "%s", "]\n");
-// }
-
-/**
  * Generates the output of the program.
  */
 static void _generateProgram(Program *program)
 {
-    char *style_method_title;
-    char *style_method_desc;
-    char *style_variable_title;
-    char *style_variable_desc;
+    char *style_method_title = default_style;
+    char *style_method_desc = default_style;
+    char *style_variable_title = default_style;
+    char *style_variable_desc = default_style;
 
     if (program->style)
     {
         if (program->style->method_style)
         {
-            style_method_title = program->style->method_style->title;
-            style_method_desc = program->style->method_style->description;
+            if (program->style->method_style->title)
+                style_method_title = program->style->method_style->title;
+            if (program->style->method_style->description)
+                style_method_desc = program->style->method_style->description;
         }
         if (program->style->variable_style)
         {
-            style_variable_title = program->style->variable_style->title;
-            style_variable_desc = program->style->variable_style->description;
+            if (program->style->variable_style->title)
+                style_variable_title = program->style->variable_style->title;
+            if (program->style->variable_style->description)
+                style_variable_desc = program->style->variable_style->description;
         }
     }
 
@@ -197,8 +116,8 @@ static void _generateMethod(Method *method, unsigned int indent, char *mtitle_st
     MethodContent *c = method->content;
 
     _output(indent, "<div class=\"card\" id=\"%s\">\n", method->name);
-    _output(indent + 1, "<h2 style=\"%s\">%s</h2>\n", (mtitle_style) ? mtitle_style : default_style, method->name);
-    _output(indent + 1, "<p style=\"%s;\">%s</p>\n", (mdesc_style) ? mdesc_style : default_style, c->description);
+    _output(indent + 1, "<h2 style=\"%s\">%s</h2>\n", mtitle_style, method->name);
+    _output(indent + 1, "<p style=\"%s\">%s</p>\n", mdesc_style, c->description);
     _output(indent + 1, "<code>%s</code>\n", c->type);
 
     // Parámetros
@@ -262,8 +181,8 @@ static void _generateVariables(VariablesTitle *varsTitle, unsigned int indent, c
         Variable *v = vl->variable;
         VariableData *d = v->data;
 
-        _output(indent + 2, "<h3 style=\"%s;\">%s</h3>\n", (vtitle_style) ? vtitle_style : default_style, v->name);
-        _output(indent + 2, "<p style=\"%s;\"> %s</p>\n", (vdesc_style) ? vdesc_style : default_style, d->description);
+        _output(indent + 2, "<h3 style=\"%s\">%s</h3>\n", vtitle_style, v->name);
+        _output(indent + 2, "<p style=\"%s\"> %s</p>\n", vdesc_style, d->description);
         _output(indent + 2, "<code>%s</code>\n", d->type);
         vl = vl->next;
     }
