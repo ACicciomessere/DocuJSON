@@ -6,6 +6,8 @@ const char _indentationCharacter = ' ';
 const char _indentationSize = 4;
 static Logger *_logger = NULL;
 
+static const char *default_style = "color: black;";
+
 void initializeGeneratorModule()
 {
     _logger = createLogger("Generator");
@@ -193,9 +195,10 @@ static void _generateVariable(Variable *var, VariableData *data, unsigned int in
 static void _generateMethod(Method *method, unsigned int indent, char *mtitle_style, char *mdesc_style)
 {
     MethodContent *c = method->content;
+
     _output(indent, "<div class=\"card\" id=\"%s\">\n", method->name);
-    _output(indent + 1, "<h2 style=\"%s;\">%s</h2>\n", mtitle_style, method->name);
-    _output(indent + 1, "<p style=\"%s;\">%s</p>\n", mdesc_style, c->description);
+    _output(indent + 1, "<h2 style=\"%s\">%s</h2>\n", (mtitle_style) ? mtitle_style : default_style, method->name);
+    _output(indent + 1, "<p style=\"%s;\">%s</p>\n", (mdesc_style) ? mdesc_style : default_style, c->description);
     _output(indent + 1, "<code>%s</code>\n", c->type);
 
     // Parámetros
@@ -259,8 +262,8 @@ static void _generateVariables(VariablesTitle *varsTitle, unsigned int indent, c
         Variable *v = vl->variable;
         VariableData *d = v->data;
 
-        _output(indent + 2, "<h3 style=\"%s;\">%s</h3>\n", vtitle_style, v->name);
-        _output(indent + 2, "<p style=\"%s;\"> %s</p>\n", vdesc_style, d->description);
+        _output(indent + 2, "<h3 style=\"%s;\">%s</h3>\n", (vtitle_style) ? vtitle_style : default_style, v->name);
+        _output(indent + 2, "<p style=\"%s;\"> %s</p>\n", (vdesc_style) ? vdesc_style : default_style, d->description);
         _output(indent + 2, "<code>%s</code>\n", d->type);
         vl = vl->next;
     }
