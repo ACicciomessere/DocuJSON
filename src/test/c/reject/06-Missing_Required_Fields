@@ -1,0 +1,11 @@
+{
+    methods: {
+        "incompleteFunction": {
+            params: {
+                "param1": {
+                    type: "string"
+                }
+            }
+        }
+    }
+} 

@@ -1,0 +1,25 @@
+{
+    methods: {
+        "regexTestFunction": {
+            params: {
+                "param1": {
+                    type: "string",
+                    regex: "[unclosed bracket",
+                    description: "Parameter with malformed regex"
+                },
+                "param2": {
+                    type: "string",
+                    regex: "invalid[regex]pattern}",
+                    description: "Parameter with mismatched brackets"
+                },
+                "param3": {
+                    type: "string",
+                    regex: "\\invalid\\escape\\sequence",
+                    description: "Parameter with invalid escape sequences"
+                }
+            },
+            description: "Function with malformed regex patterns",
+            type: "boolean"
+        }
+    }
+} 

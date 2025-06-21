@@ -1,0 +1,45 @@
+{
+    methods: {
+        "initializeSystem": {
+            params: {},
+            description: "Initializes the system with default settings",
+            type: "void",
+            related: [],
+            variables: {}
+        },
+        "getStatus": {
+            params: {},
+            description: "Returns the current system status",
+            type: "string",
+            variables: {}
+        },
+        "cleanup": {
+            params: {
+                "force": {
+                    type: "boolean",
+                    description: "Force cleanup even if resources are in use"
+                }
+            },
+            description: "Performs system cleanup operations",
+            type: "boolean",
+            related: [],
+            variables: {
+                "cleanupLog": {
+                    type: "array",
+                    description: "Log of cleanup operations performed"
+                }
+            }
+        }
+    },
+    variables: {},
+    style: {
+        methods: {
+            title: "color: #27ae60, font-size: 22px",
+            description: "color: #2ecc71, font-size: 16px"
+        },
+        variables: {
+            title: "color: #16a085, font-size: 18px",
+            description: "color: #1abc9c, font-size: 14px"
+        }
+    }
+} 

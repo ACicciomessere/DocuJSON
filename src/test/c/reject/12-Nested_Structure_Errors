@@ -1,0 +1,42 @@
+{
+    methods: {
+        "nestedErrorFunction": {
+            params: {
+                "param1": {
+                    type: "string",
+                    description: "Valid parameter"
+                }
+            },
+            description: "Function with nested structure errors",
+            type: "object",
+            variables: {
+                "nestedVar": {
+                    type: "object",
+                    description: "Variable with nested structure",
+                    nestedField: {
+                        type: "string",
+                        description: "This should not be allowed"
+                    }
+                }
+            }
+        }
+    },
+    variables: {
+        "invalidNestedVar": {
+            type: "array",
+            description: "Variable with invalid nested structure",
+            items: {
+                type: "string"
+            }
+        }
+    },
+    style: {
+        methods: {
+            title: "color: blue",
+            description: "font-size: 16px",
+            invalidNestedProperty: {
+                color: "red"
+            }
+        }
+    }
+} 

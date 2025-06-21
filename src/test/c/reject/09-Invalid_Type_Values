@@ -1,0 +1,28 @@
+{
+    methods: {
+        "invalidTypeFunction": {
+            params: {
+                "param1": {
+                    type: "invalid_type",
+                    description: "Parameter with invalid type"
+                },
+                "param2": {
+                    type: 123,
+                    description: "Parameter with numeric type"
+                },
+                "param3": {
+                    type: true,
+                    description: "Parameter with boolean type"
+                }
+            },
+            description: "Function with invalid type values",
+            type: "unknown_type"
+        }
+    },
+    variables: {
+        "invalidVar": {
+            type: "complex_type",
+            description: "Variable with invalid type"
+        }
+    }
+} 

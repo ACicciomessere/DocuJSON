@@ -1,0 +1,60 @@
+{
+    methods: {
+        "validateUser": {
+            params: {
+                "username": {
+                    type: "string",
+                    regex: "^[a-zA-Z0-9_]{3,20}$",
+                    range: "[3,20]",
+                    description: "Username must be alphanumeric with underscores, 3-20 characters"
+                },
+                "email": {
+                    type: "string",
+                    regex: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+                    description: "Valid email address format"
+                },
+                "age": {
+                    type: "number",
+                    range: "[18,120]",
+                    description: "User age between 18 and 120"
+                },
+                "isActive": {
+                    type: "boolean",
+                    description: "Whether the user account is active"
+                }
+            },
+            description: "Validates user registration data with comprehensive checks",
+            type: "boolean",
+            variables: {
+                "validationErrors": {
+                    type: "array",
+                    description: "Array of validation error messages"
+                },
+                "isValid": {
+                    type: "boolean",
+                    description: "Overall validation result"
+                }
+            }
+        }
+    },
+    variables: {
+        "maxRetries": {
+            type: "number",
+            description: "Maximum number of validation retry attempts"
+        },
+        "defaultTimeout": {
+            type: "number",
+            description: "Default timeout in milliseconds for validation operations"
+        }
+    },
+    style: {
+        methods: {
+            title: "color: #2c3e50, font-weight: bold, font-size: 18px",
+            description: "color: #7f8c8d, font-size: 14px, font-style: italic"
+        },
+        variables: {
+            title: "color: #34495e, font-size: 16px",
+            description: "color: #95a5a6, font-size: 12px"
+        }
+    }
+} 

@@ -1,0 +1,35 @@
+{
+    methods: {
+        "rangeTestFunction": {
+            params: {
+                "param1": {
+                    type: "number",
+                    range: "invalid range format",
+                    description: "Parameter with invalid range format"
+                },
+                "param2": {
+                    type: "number",
+                    range: "[10,5]",
+                    description: "Parameter with reversed range values"
+                },
+                "param3": {
+                    type: "number",
+                    range: "[abc,def]",
+                    description: "Parameter with non-numeric range values"
+                },
+                "param4": {
+                    type: "number",
+                    range: "[10]",
+                    description: "Parameter with incomplete range"
+                },
+                "param5": {
+                    type: "number",
+                    range: "10,20",
+                    description: "Parameter with range missing brackets"
+                }
+            },
+            description: "Function with invalid range formats",
+            type: "number"
+        }
+    }
+} 

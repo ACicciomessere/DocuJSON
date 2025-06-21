@@ -1,0 +1,66 @@
+{
+    methods: {
+        "calculate_metrics": {
+            params: {
+                "data_set": {
+                    type: "array",
+                    description: "Dataset to analyze"
+                },
+                "metric_type": {
+                    type: "string",
+                    description: "Type of metric to calculate"
+                }
+            },
+            description: "Calculates various statistical metrics from the dataset",
+            type: "object",
+            variables: {
+                "mean_value": {
+                    type: "number",
+                    description: "Mean of the dataset"
+                },
+                "std_deviation": {
+                    type: "number",
+                    description: "Standard deviation of the dataset"
+                }
+            }
+        },
+        "processUserData": {
+            params: {
+                "user_info": {
+                    type: "object",
+                    description: "User information object"
+                }
+            },
+            description: "Processes and validates user information",
+            type: "boolean",
+            related: [
+                "validateUserData",
+                "saveUserData"
+            ]
+        }
+    },
+    variables: {
+        "api_endpoint": {
+            type: "string",
+            description: "API endpoint URL for data processing"
+        },
+        "max_retry_count": {
+            type: "number",
+            description: "Maximum number of retry attempts"
+        },
+        "default_timeout_ms": {
+            type: "number",
+            description: "Default timeout in milliseconds"
+        }
+    },
+    style: {
+        methods: {
+            title: "color: #e74c3c, font-weight: bold, font-size: 19px",
+            description: "color: #c0392b, font-size: 15px, font-style: italic"
+        },
+        variables: {
+            title: "color: #d35400, font-size: 17px",
+            description: "color: #e67e22, font-size: 13px"
+        }
+    }
+} 

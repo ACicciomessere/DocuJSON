@@ -1,0 +1,86 @@
+{
+    methods: {
+        "processData": {
+            params: {
+                "data": {
+                    type: "object",
+                    description: "Input data object to process"
+                },
+                "options": {
+                    type: "object",
+                    description: "Processing options and configuration"
+                }
+            },
+            description: "Main data processing function that orchestrates the workflow",
+            type: "object",
+            related: [
+                "validateData",
+                "transformData",
+                "saveData",
+                "notifyCompletion"
+            ],
+            variables: {
+                "processedData": {
+                    type: "object",
+                    description: "Data after processing is complete"
+                },
+                "processingStatus": {
+                    type: "string",
+                    description: "Current status of the processing operation"
+                }
+            }
+        },
+        "validateData": {
+            params: {
+                "data": {
+                    type: "object",
+                    description: "Data to validate"
+                }
+            },
+            description: "Validates the input data structure and content",
+            type: "boolean",
+            related: [
+                "processData",
+                "logValidationError"
+            ]
+        },
+        "transformData": {
+            params: {
+                "data": {
+                    type: "object",
+                    description: "Data to transform"
+                },
+                "transformationRules": {
+                    type: "array",
+                    description: "Array of transformation rules to apply"
+                }
+            },
+            description: "Applies transformation rules to the data",
+            type: "object",
+            related: [
+                "processData",
+                "applyTransformationRule"
+            ]
+        }
+    },
+    variables: {
+        "defaultProcessingOptions": {
+            type: "object",
+            description: "Default options for data processing operations"
+        },
+        "transformationTemplates": {
+            type: "array",
+            description: "Predefined transformation templates"
+        }
+    },
+    style: {
+        methods: {
+            title: "color: #8e44ad, font-weight: 600, font-size: 20px",
+            description: "color: #9b59b6, font-size: 15px"
+        },
+        variables: {
+            title: "color: #6c5ce7, font-size: 17px",
+            description: "color: #a29bfe, font-size: 13px"
+        }
+    }
+} 

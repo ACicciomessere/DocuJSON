@@ -1,0 +1,136 @@
+{
+    methods: {
+        "authenticateUser": {
+            params: {
+                "username": {
+                    type: "string",
+                    regex: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+                    range: "[5,254]",
+                    description: "User email address for authentication"
+                },
+                "password": {
+                    type: "string",
+                    regex: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+                    range: "[8,128]",
+                    description: "Password with minimum security requirements"
+                },
+                "rememberMe": {
+                    type: "boolean",
+                    description: "Whether to remember the user session"
+                }
+            },
+            description: "Authenticates a user with email and password, returns JWT token",
+            type: "object",
+            related: [
+                "refreshToken",
+                "logoutUser",
+                "validateToken",
+                "resetPassword"
+            ],
+            variables: {
+                "authToken": {
+                    type: "string",
+                    description: "JWT authentication token"
+                },
+                "refreshToken": {
+                    type: "string",
+                    description: "Token for refreshing the session"
+                },
+                "expiresAt": {
+                    type: "number",
+                    description: "Token expiration timestamp"
+                }
+            }
+        },
+        "createUser": {
+            params: {
+                "userData": {
+                    type: "object",
+                    description: "Complete user registration data"
+                },
+                "sendWelcomeEmail": {
+                    type: "boolean",
+                    description: "Whether to send welcome email after registration"
+                }
+            },
+            description: "Creates a new user account with validation and optional welcome email",
+            type: "object",
+            related: [
+                "authenticateUser",
+                "sendWelcomeEmail",
+                "validateUserData"
+            ],
+            variables: {
+                "userId": {
+                    type: "string",
+                    description: "Unique identifier for the created user"
+                },
+                "verificationToken": {
+                    type: "string",
+                    description: "Token for email verification"
+                }
+            }
+        },
+        "updateUserProfile": {
+            params: {
+                "userId": {
+                    type: "string",
+                    regex: "^[0-9a-fA-F]{24}$",
+                    description: "MongoDB ObjectId of the user"
+                },
+                "updates": {
+                    type: "object",
+                    description: "Fields to update in the user profile"
+                }
+            },
+            description: "Updates user profile information with validation",
+            type: "boolean",
+            related: [
+                "validateUserData",
+                "sendProfileUpdateNotification"
+            ],
+            variables: {
+                "updatedFields": {
+                    type: "array",
+                    description: "List of fields that were successfully updated"
+                },
+                "validationErrors": {
+                    type: "array",
+                    description: "Any validation errors encountered"
+                }
+            }
+        }
+    },
+    variables: {
+        "apiVersion": {
+            type: "string",
+            description: "Current API version"
+        },
+        "maxRequestSize": {
+            type: "number",
+            description: "Maximum request body size in bytes"
+        },
+        "rateLimitPerMinute": {
+            type: "number",
+            description: "Rate limiting threshold per minute"
+        },
+        "defaultTimeout": {
+            type: "number",
+            description: "Default request timeout in milliseconds"
+        },
+        "supportedContentTypes": {
+            type: "array",
+            description: "List of supported content types"
+        }
+    },
+    style: {
+        methods: {
+            title: "color: #2c3e50, font-weight: bold, font-size: 24px, text-transform: uppercase",
+            description: "color: #7f8c8d, font-size: 16px, font-style: italic, line-height: 1.5"
+        },
+        variables: {
+            title: "color: #34495e, font-size: 20px, font-weight: 600",
+            description: "color: #95a5a6, font-size: 14px, line-height: 1.4"
+        }
+    }
+} 

@@ -1,0 +1,25 @@
+{
+    methods: {
+        "testFunction": {
+            params: {
+                "param1": {
+                    type: "string",
+                    description: "Test parameter"
+                }
+            },
+            description: "Test function description",
+            type: "string"
+        },
+    variables: {
+        "testVar": {
+            type: "number",
+            description: "Test variable"
+        }
+    },
+    style: {
+        methods: {
+            title: "color: blue",
+            description: "font-size: 16px"
+        }
+    }
+} 
