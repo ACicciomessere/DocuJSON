@@ -27,8 +27,8 @@ static void _generateEpilogue();
 // static void _generateExpression(const unsigned int indentationLevel, Expression *expression);
 // static void _generateFactor(const unsigned int indentationLevel, Factor *factor);
 static void _generateProgram(Program *program);
-static void _generateMethod(Method *method, unsigned int indent, char *mts, char *mds);
-static void _generateVariables(VariablesTitle *varsTitle, unsigned int indent);
+static void _generateMethod(Method *method, unsigned int indent, char *mtitle_style, char *mdesc_style);
+static void _generateVariables(VariablesTitle *varsTitle, unsigned int indent, char *vtitle_style, char *vdesc_style);
 static void _generatePrologue(void);
 static char *_indentation(const unsigned int indentationLevel);
 static void _output(const unsigned int indentationLevel, const char *const format, ...);
@@ -127,8 +127,8 @@ static void _generateProgram(Program *program)
 {
     char *style_method_title;
     char *style_method_desc;
-    Style *style_variable_title;
-    Style *style_variable_desc;
+    char *style_variable_title;
+    char *style_variable_desc;
 
     if (program->style)
     {
@@ -160,17 +160,43 @@ static void _generateProgram(Program *program)
 
     if (program->variables)
     {
-        _generateVariables(program->variables, 2);
+        _generateVariables(program->variables, 2, style_variable_title, style_variable_desc);
     }
 }
 
-static void _generateMethod(Method *method, unsigned int indent, char *mts, char *mds)
+static void _generateParam(Param *param, ParamData *data, unsigned int indent)
+{
+    _output(indent + 2, "<li>\n");
+    _output(indent + 3, "<strong>%s</strong>\n", param->name);
+    _output(indent + 3, "<ul>\n");
+    _output(indent + 4, "<li>Descripción: %s</li>\n", data->description);
+    _output(indent + 4, "<li>Tipo: <code>%s</code></li>\n", data->type);
+    if (data->regex)
+        _output(indent + 4, "<li>Regex: <code>%s</code></li>\n", data->regex);
+    if (data->range)
+        _output(indent + 4, "<li>Rango: <code>%s</code></li>\n", data->range);
+    _output(indent + 3, "</ul>\n");
+    _output(indent + 2, "</li>\n");
+}
+
+static void _generateVariable(Variable *var, VariableData *data, unsigned int indent)
+{
+    _output(indent + 2, "<li>\n");
+    _output(indent + 3, "<strong>%s</strong>\n", var->name);
+    _output(indent + 3, "<ul>\n");
+    _output(indent + 4, "<li>Descripción: %s</li>\n", data->description);
+    _output(indent + 4, "<li>Tipo: <code>%s</code></li>\n", data->type);
+    _output(indent + 3, "</ul>\n");
+    _output(indent + 2, "</li>\n");
+}
+
+static void _generateMethod(Method *method, unsigned int indent, char *mtitle_style, char *mdesc_style)
 {
     MethodContent *c = method->content;
-    _output(indent, "<div id=\"%s\">\n", method->name);
-    _output(indent + 1, "<h2 style=\"%s;\">%s</h2>\n", mts, method->name);
-    _output(indent + 1, "<p style=\"%s;\">%s</p>\n", mds, c->description);
-    _output(indent + 1, "<p><strong>Tipo:</strong> %s</p>\n", c->type);
+    _output(indent, "<div class=\"card\" id=\"%s\">\n", method->name);
+    _output(indent + 1, "<h2 style=\"%s;\">%s</h2>\n", mtitle_style, method->name);
+    _output(indent + 1, "<p style=\"%s;\">%s</p>\n", mdesc_style, c->description);
+    _output(indent + 1, "<code>%s</code>\n", c->type);
 
     // Parámetros
     if (c->params && c->params->params)
@@ -182,15 +208,7 @@ static void _generateMethod(Method *method, unsigned int indent, char *mts, char
         {
             Param *p = pl->param;
             ParamData *d = p->data;
-            _output(indent + 2, "<li>\n");
-            _output(indent + 3, "<strong>%s</strong>\n", p->name);
-            _output(indent + 3, "<ul>\n");
-            _output(indent + 4, "<li>Descripción: %s</li>\n", d->description);
-            _output(indent + 4, "<li>Tipo: %s</li>\n", d->type);
-            _output(indent + 4, "<li>Regex: %s</li>\n", d->regex);
-            _output(indent + 4, "<li>Rango: %s</li>\n", d->range);
-            _output(indent + 3, "</ul>\n");
-            _output(indent + 2, "</li>\n");
+            _generateParam(p, d, indent);
             pl = pl->next;
         }
         _output(indent + 1, "</ul>\n");
@@ -206,13 +224,8 @@ static void _generateMethod(Method *method, unsigned int indent, char *mts, char
         {
             Variable *v = vl->variable;
             VariableData *d = v->data;
-            _output(indent + 2, "<li>\n");
-            _output(indent + 3, "<strong>%s</strong>\n", v->name);
-            _output(indent + 3, "<ul>\n");
-            _output(indent + 4, "<li>Descripción: %s</li>\n", d->description);
-            _output(indent + 4, "<li>Tipo: %s</li>\n", d->type);
-            _output(indent + 3, "</ul>\n");
-            _output(indent + 2, "</li>\n");
+            _generateVariable(v, d, indent);
+
             vl = vl->next;
         }
         _output(indent + 1, "</ul>\n");
@@ -235,19 +248,20 @@ static void _generateMethod(Method *method, unsigned int indent, char *mts, char
     _output(indent, "</div>\n");
 }
 
-static void _generateVariables(VariablesTitle *varsTitle, unsigned int indent)
+static void _generateVariables(VariablesTitle *varsTitle, unsigned int indent, char *vtitle_style, char *vdesc_style)
 {
     _output(indent, "<div>\n");
     _output(indent + 1, "<h1>Variables Globales</h1>\n");
-    _output(indent + 1, "<div class=\"variable\">\n");
+    _output(indent + 1, "<div class=\"card\">\n");
     VariableList *vl = varsTitle->variables;
     while (vl)
     {
         Variable *v = vl->variable;
         VariableData *d = v->data;
-        _output(indent + 2, "<h3>%s</h3>\n", v->name);
-        _output(indent + 2, "<p>Descripción: %s</p>\n", d->description);
-        _output(indent + 2, "<p>Tipo: %s</p>\n", d->type);
+
+        _output(indent + 2, "<h3 style=\"%s;\">%s</h3>\n", vtitle_style, v->name);
+        _output(indent + 2, "<p style=\"%s;\"> %s</p>\n", vdesc_style, d->description);
+        _output(indent + 2, "<code>%s</code>\n", d->type);
         vl = vl->next;
     }
     _output(indent + 1, "</div>\n");
@@ -262,8 +276,36 @@ static void _generatePrologue(void)
     _output(2, "<meta charset=\"UTF-8\">\n");
     _output(2, "<title>Documentación</title>\n");
     _output(1, "</head>\n");
+    _output(1, "<style>\n"
+               "  body {\n"
+               "    font-family: monospace;"
+               "    background: #f5f7fa;\n"
+               "    color: #333;\n"
+               "    margin: 0;\n"
+               "    padding: 2rem;\n"
+               "  }\n"
+               "  .card {\n"
+               "    background: #fff;\n"
+               "    padding: 1.5rem 2rem;\n"
+               "    border-radius: 10px;\n"
+               "    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);\n"
+               "    margin-bottom: 2rem;\n"
+               "  }\n"
+               "  code {\n"
+               "    background: #e9ecef;\n"
+               "    padding: 0.02rem 0.2rem;\n"
+               "    border-radius: 5px;\n"
+               "    font-weight: bold;\n"
+               "  }\n"
+               "  .section-title {\n"
+               "    font-size: 1.8rem;\n"
+               "    color: #343a40;\n"
+               "    margin-bottom: 1rem;\n"
+               "  }\n"
+               "</style>\n");
+
     _output(1, "<body>\n");
-    _output(2, "<h1>Documentación</h1>\n");
+    _output(2, "<h1 style=\"text-align: center;\">Documentación</h1>\n");
 }
 
 /**
