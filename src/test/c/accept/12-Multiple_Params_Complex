@@ -85,12 +85,12 @@
     },
     style: {
         methods: {
-            title: "color: #8e44ad; font-weight: 600; font-size: 20px;",
-            description: "color: #9b59b6; font-size: 15px;"
+            title: "color": "#8e44ad"; "font-weight": "600"; "font-size": "20px";,
+            description: "color": "#9b59b6"; "font-size": "15px";
         },
         variables: {
-            title: "color: #6c5ce7; font-size: 17px;",
-            description: "color: #a29bfe; font-size: 13px;"
+            title: "color": "#6c5ce7"; "font-size": "17px";,
+            description: "color": "#a29bfe"; "font-size": "13px";
         }
     }
 } 

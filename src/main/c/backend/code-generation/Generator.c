@@ -1,4 +1,5 @@
 #include "Generator.h"
+#include <string.h>
 
 /* MODULE INTERNAL STATE */
 
@@ -31,10 +32,36 @@ static void _generatePrologue(void);
 static char *_indentation(const unsigned int indentationLevel);
 static void _output(const unsigned int indentationLevel, const char *const format, ...);
 
-static void _generateEpilogue()
+static char *generateStyleString(StyleList *styleList)
 {
-    _output(1, "</body>\n");
-    _output(0, "</html>\n");
+    size_t bufferSize = 256;
+    char *buffer = malloc(bufferSize);
+    buffer[0] = '\0';
+
+    StyleList *current = styleList;
+    while (current)
+    {
+        StyleStructure *s = current->style;
+        if (s && s->label && s->value)
+        {
+            size_t needed = strlen(s->label) + strlen(s->value) + 4; // espacio para ": ", "; " y \0
+
+            // redimensionar si es necesario
+            if (strlen(buffer) + needed >= bufferSize)
+            {
+                bufferSize *= 2;
+                buffer = realloc(buffer, bufferSize);
+            }
+
+            strcat(buffer, s->label);
+            strcat(buffer, ": ");
+            strcat(buffer, s->value);
+            strcat(buffer, "; ");
+        }
+        current = current->next;
+    }
+
+    return buffer;
 }
 
 /**
@@ -42,26 +69,41 @@ static void _generateEpilogue()
  */
 static void _generateProgram(Program *program)
 {
-    char *style_method_title = default_style;
-    char *style_method_desc = default_style;
-    char *style_variable_title = default_style;
-    char *style_variable_desc = default_style;
+    char *style_method_title = strdup(default_style);
+    char *style_method_desc = strdup(default_style);
+    char *style_variable_title = strdup(default_style);
+    char *style_variable_desc = strdup(default_style);
 
     if (program->style)
     {
         if (program->style->method_style)
         {
             if (program->style->method_style->title)
-                style_method_title = program->style->method_style->title;
+            {
+                free(style_method_title);
+                style_method_title = generateStyleString(program->style->method_style->title);
+            }
+
             if (program->style->method_style->description)
-                style_method_desc = program->style->method_style->description;
+            {
+                free(style_method_desc);
+                style_method_desc = generateStyleString(program->style->method_style->description);
+            }
         }
+
         if (program->style->variable_style)
         {
             if (program->style->variable_style->title)
-                style_variable_title = program->style->variable_style->title;
+            {
+                free(style_variable_title);
+                style_variable_title = generateStyleString(program->style->variable_style->title);
+            }
+
             if (program->style->variable_style->description)
-                style_variable_desc = program->style->variable_style->description;
+            {
+                free(style_variable_desc);
+                style_variable_desc = generateStyleString(program->style->variable_style->description);
+            }
         }
     }
 
@@ -83,6 +125,11 @@ static void _generateProgram(Program *program)
     {
         _generateVariables(program->variables, 2, style_variable_title, style_variable_desc);
     }
+
+    free(style_method_title);
+    free(style_method_desc);
+    free(style_variable_title);
+    free(style_variable_desc);
 }
 
 static void _generateParam(Param *param, ParamData *data, unsigned int indent)
@@ -174,16 +221,18 @@ static void _generateVariables(VariablesTitle *varsTitle, unsigned int indent, c
 {
     _output(indent, "<div>\n");
     _output(indent + 1, "<h1>Variables Globales</h1>\n");
-    _output(indent + 1, "<div class=\"card\">\n");
+    _output(indent + 1, "<div >\n");
     VariableList *vl = varsTitle->variables;
     while (vl)
     {
         Variable *v = vl->variable;
         VariableData *d = v->data;
 
-        _output(indent + 2, "<h3 style=\"%s\">%s</h3>\n", vtitle_style, v->name);
-        _output(indent + 2, "<p style=\"%s\"> %s</p>\n", vdesc_style, d->description);
-        _output(indent + 2, "<code>%s</code>\n", d->type);
+        _output(indent + 2, "<div class=\"card\" id=\"%s\">\n", v->name);
+        _output(indent + 3, "<h3 style=\"%s\">%s</h3>\n", vtitle_style, v->name);
+        _output(indent + 3, "<p style=\"%s\"> %s</p>\n", vdesc_style, d->description);
+        _output(indent + 3, "<code>%s</code>\n", d->type);
+        _output(indent + 2, "</div>\n");
         vl = vl->next;
     }
     _output(indent + 1, "</div>\n");
@@ -228,6 +277,12 @@ static void _generatePrologue(void)
 
     _output(1, "<body>\n");
     _output(2, "<h1 style=\"text-align: center;\">Documentación</h1>\n");
+}
+
+static void _generateEpilogue()
+{
+    _output(1, "</body>\n");
+    _output(0, "</html>\n");
 }
 
 /**

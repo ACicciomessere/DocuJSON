@@ -32,6 +32,8 @@ static boolean _areParamsListsEqual(ParamsList *params1, ParamsList *params2);
 static ValidationResult _validateRelatedFunctionsExist(RelatedList *related, MethodList *allMethods);
 static boolean _methodExists(const char *methodName, MethodList *methods);
 static ValidationResult _validateAllRelatedFunctions(MethodList *methods, ValidationConfig *config);
+static ValidationResult _validateStyleList(StyleList *styleList, ValidationConfig *config);
+static ValidationResult _validateStyleStructure(StyleStructure *style, ValidationConfig *config);
 
 /**
  * Creates a successful validation result
@@ -393,6 +395,73 @@ static ValidationResult _validateAllRelatedFunctions(MethodList *methods, Valida
     return combinedResult;
 }
 
+/**
+ * Validates a list of style structures recursively
+ */
+static ValidationResult _validateStyleList(StyleList *styleList, ValidationConfig *config)
+{
+    if (styleList == NULL)
+    {
+        return _createValidResult();
+    }
+
+    ValidationResult currentResult = _validateStyleStructure(styleList->style, config);
+    ValidationResult nextResult = _validateStyleList(styleList->next, config);
+
+    if (currentResult.succeed && nextResult.succeed)
+    {
+        releaseValidationResult(&nextResult);
+        return currentResult;
+    }
+    else
+    {
+        ValidationResult results[] = {currentResult, nextResult};
+        ValidationResult combined = combineValidationResults(results, 2);
+        return combined;
+    }
+}
+
+/**
+ * Validates a single style structure
+ */
+static ValidationResult _validateStyleStructure(StyleStructure *style, ValidationConfig *config)
+{
+    if (style == NULL)
+    {
+        return _createInvalidResult("Style structure is NULL");
+    }
+
+    if (style->label == NULL || strlen(style->label) == 0)
+    {
+        return _createInvalidResult("Style property name cannot be empty");
+    }
+
+    if (style->value == NULL || strlen(style->value) == 0)
+    {
+        return _createInvalidResult("Style property value cannot be empty");
+    }
+
+    // Validar que la propiedad CSS sea válida
+    if (!is_valid_property(style->label))
+    {
+        char *error = createErrorMessage("CSS property", "Invalid property name");
+        ValidationResult result = _createInvalidResult(error);
+        free(error);
+        return result;
+    }
+
+    // Validar que el valor CSS sea válido
+    if (!is_valid_value(style->value))
+    {
+        char *error = createErrorMessage("CSS value", "Invalid property value");
+        ValidationResult result = _createInvalidResult(error);
+        free(error);
+        return result;
+    }
+
+    return _createValidResult();
+}
+
 /** PUBLIC FUNCTIONS */
 
 ValidationConfig createDefaultValidationConfig()
@@ -669,24 +738,37 @@ ValidationResult validateStyle(StyleTitle *style, ValidationConfig *config)
         {
             methodStyleResult = _createInvalidResult("Method style title cannot be NULL");
         }
-        else if (!validate_css(style->method_style->title))
+        else
         {
-            methodStyleResult = _createInvalidResult("Method style title contains invalid CSS");
-        }
-
-        if (style->method_style->description != NULL && !validate_css(style->method_style->description))
-        {
-            if (methodStyleResult.succeed)
+            ValidationResult titleResult = _validateStyleList(style->method_style->title, config);
+            if (!titleResult.succeed)
             {
-                methodStyleResult = _createInvalidResult("Method style description contains invalid CSS");
+                methodStyleResult = _createInvalidResult("Method style title contains invalid CSS");
+                releaseValidationResult(&titleResult);
             }
             else
             {
-                // Combinar con el error existente
-                ValidationResult descResult = _createInvalidResult("Method style description contains invalid CSS");
-                ValidationResult results[] = {methodStyleResult, descResult};
-                methodStyleResult = combineValidationResults(results, 2);
+                releaseValidationResult(&titleResult);
             }
+        }
+
+        if (style->method_style->description != NULL)
+        {
+            ValidationResult descResult = _validateStyleList(style->method_style->description, config);
+            if (!descResult.succeed)
+            {
+                if (methodStyleResult.succeed)
+                {
+                    methodStyleResult = _createInvalidResult("Method style description contains invalid CSS");
+                }
+                else
+                {
+                    // Combinar con el error existente
+                    ValidationResult results[] = {methodStyleResult, _createInvalidResult("Method style description contains invalid CSS")};
+                    methodStyleResult = combineValidationResults(results, 2);
+                }
+            }
+            releaseValidationResult(&descResult);
         }
     }
 
@@ -697,24 +779,37 @@ ValidationResult validateStyle(StyleTitle *style, ValidationConfig *config)
         {
             variableStyleResult = _createInvalidResult("Variable style title cannot be NULL");
         }
-        else if (!validate_css(style->variable_style->title))
+        else
         {
-            variableStyleResult = _createInvalidResult("Variable style title contains invalid CSS");
-        }
-
-        if (style->variable_style->description != NULL && !validate_css(style->variable_style->description))
-        {
-            if (variableStyleResult.succeed)
+            ValidationResult titleResult = _validateStyleList(style->variable_style->title, config);
+            if (!titleResult.succeed)
             {
-                variableStyleResult = _createInvalidResult("Variable style description contains invalid CSS");
+                variableStyleResult = _createInvalidResult("Variable style title contains invalid CSS");
+                releaseValidationResult(&titleResult);
             }
             else
             {
-                // Combinar con el error existente
-                ValidationResult descResult = _createInvalidResult("Variable style description contains invalid CSS");
-                ValidationResult results[] = {variableStyleResult, descResult};
-                variableStyleResult = combineValidationResults(results, 2);
+                releaseValidationResult(&titleResult);
             }
+        }
+
+        if (style->variable_style->description != NULL)
+        {
+            ValidationResult descResult = _validateStyleList(style->variable_style->description, config);
+            if (!descResult.succeed)
+            {
+                if (variableStyleResult.succeed)
+                {
+                    variableStyleResult = _createInvalidResult("Variable style description contains invalid CSS");
+                }
+                else
+                {
+                    // Combinar con el error existente
+                    ValidationResult results[] = {variableStyleResult, _createInvalidResult("Variable style description contains invalid CSS")};
+                    variableStyleResult = combineValidationResults(results, 2);
+                }
+            }
+            releaseValidationResult(&descResult);
         }
     }
 

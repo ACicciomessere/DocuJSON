@@ -48,7 +48,7 @@ const int main(const int count, const char **arguments)
 		ValidationResult validationResult = validateProgram(program, &validationConfig);
 		if (validationResult.succeed)
 		{
-			generate(&compilerState);
+		generate(&compilerState);
 		}
 		else
 		{

@@ -80,8 +80,8 @@
     },
     style: {
         methods: {
-            title: "color: green; font-size: 30px;",
-            description: "color: gray; font-size: 18px;"
+            title: "color": "green"; "font-size": "30px";,
+            description: "color": "gray"; "font-size": "18px";
         }
     }
 }
