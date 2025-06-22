@@ -1,4 +1,5 @@
 #include "DocuJSON.h"
+#include "utils.h"
 
 /* MODULE INTERNAL STATE */
 
@@ -25,6 +26,12 @@ static ValidationResult _validateMethodList(MethodList *methods, ValidationConfi
 static ValidationResult _validateParamsList(ParamsList *params, ValidationConfig *config);
 static ValidationResult _validateVariablesList(VariableList *variables, ValidationConfig *config);
 static ValidationResult _validateRelatedList(RelatedList *related, ValidationConfig *config);
+static ValidationResult _validateMethodDuplicates(MethodList *methods, ValidationConfig *config);
+static boolean _areMethodsDuplicate(Method *method1, Method *method2);
+static boolean _areParamsListsEqual(ParamsList *params1, ParamsList *params2);
+static ValidationResult _validateRelatedFunctionsExist(RelatedList *related, MethodList *allMethods);
+static boolean _methodExists(const char *methodName, MethodList *methods);
+static ValidationResult _validateAllRelatedFunctions(MethodList *methods, ValidationConfig *config);
 
 /**
  * Creates a successful validation result
@@ -157,6 +164,235 @@ static ValidationResult _validateRelatedList(RelatedList *related, ValidationCon
     return _validateRelatedList(related->next, config);
 }
 
+/**
+ * Validates a list of method duplicates
+ */
+static ValidationResult _validateMethodDuplicates(MethodList *methods, ValidationConfig *config)
+{
+    if (methods == NULL)
+    {
+        return _createValidResult();
+    }
+
+    MethodList *current = methods;
+    while (current != NULL)
+    {
+        MethodList *next = current->next;
+        while (next != NULL)
+        {
+            if (_areMethodsDuplicate(current->method, next->method))
+            {
+                char error_message[512];
+                snprintf(error_message, sizeof(error_message), 
+                        "Duplicate method found: '%s' with identical name and parameters", 
+                        current->method->name);
+                return _createInvalidResult(error_message);
+            }
+            next = next->next;
+        }
+        current = current->next;
+    }
+
+    return _createValidResult();
+}
+
+/**
+ * Checks if two methods are duplicates
+ */
+static boolean _areMethodsDuplicate(Method *method1, Method *method2)
+{
+    if (method1 == NULL || method2 == NULL)
+    {
+        return false;
+    }
+
+    // Check if method names are the same
+    if (strcmp(method1->name, method2->name) != 0)
+    {
+        return false;
+    }
+
+    // If names are the same, check if parameters are also the same
+    ParamsList *params1 = NULL;
+    ParamsList *params2 = NULL;
+    
+    if (method1->content != NULL && method1->content->params != NULL)
+    {
+        params1 = method1->content->params->params;
+    }
+    
+    if (method2->content != NULL && method2->content->params != NULL)
+    {
+        params2 = method2->content->params->params;
+    }
+    
+    return _areParamsListsEqual(params1, params2);
+}
+
+/**
+ * Checks if two parameter lists are equal
+ */
+static boolean _areParamsListsEqual(ParamsList *params1, ParamsList *params2)
+{
+    if (params1 == NULL && params2 == NULL)
+    {
+        return true;
+    }
+    if (params1 == NULL || params2 == NULL)
+    {
+        return false;
+    }
+
+    while (params1 != NULL && params2 != NULL)
+    {
+        // Check if param structures are valid
+        if (params1->param == NULL || params2->param == NULL)
+        {
+            return false;
+        }
+        
+        // Compare parameter names
+        if (params1->param->name == NULL || params2->param->name == NULL)
+        {
+            return false;
+        }
+        
+        if (strcmp(params1->param->name, params2->param->name) != 0)
+        {
+            return false;
+        }
+        
+        // Compare parameter types
+        char *type1 = NULL;
+        char *type2 = NULL;
+        
+        if (params1->param->data != NULL)
+        {
+            type1 = params1->param->data->type;
+        }
+        
+        if (params2->param->data != NULL)
+        {
+            type2 = params2->param->data->type;
+        }
+        
+        if ((type1 == NULL && type2 != NULL) || (type1 != NULL && type2 == NULL))
+        {
+            return false;
+        }
+        
+        if (type1 != NULL && type2 != NULL && strcmp(type1, type2) != 0)
+        {
+            return false;
+        }
+        
+        params1 = params1->next;
+        params2 = params2->next;
+    }
+
+    return params1 == NULL && params2 == NULL;
+}
+
+/**
+ * Validates a list of related functions exist
+ */
+static ValidationResult _validateRelatedFunctionsExist(RelatedList *related, MethodList *allMethods)
+{
+    if (related == NULL)
+    {
+        return _createValidResult();
+    }
+
+    if (related->name == NULL || strlen(related->name) == 0)
+    {
+        return _createInvalidResult("Related method name cannot be empty");
+    }
+
+    if (!isValidIdentifier(related->name))
+    {
+        char *error = createErrorMessage("Related method", "Invalid identifier format");
+        ValidationResult result = _createInvalidResult(error);
+        free(error);
+        return result;
+    }
+
+    if (!_methodExists(related->name, allMethods))
+    {
+        char *error = createErrorMessage("Related method", "Method does not exist");
+        ValidationResult result = _createInvalidResult(error);
+        free(error);
+        return result;
+    }
+
+    return _validateRelatedFunctionsExist(related->next, allMethods);
+}
+
+/**
+ * Checks if a method exists in a list of methods
+ */
+static boolean _methodExists(const char *methodName, MethodList *methods)
+{
+    if (methods == NULL)
+    {
+        return false;
+    }
+
+    MethodList *current = methods;
+    while (current != NULL)
+    {
+        if (current->method != NULL && strcmp(current->method->name, methodName) == 0)
+        {
+            return true;
+        }
+        current = current->next;
+    }
+
+    return false;
+}
+
+/**
+ * Validates all related functions for a list of methods
+ */
+static ValidationResult _validateAllRelatedFunctions(MethodList *methods, ValidationConfig *config)
+{
+    if (methods == NULL)
+    {
+        return _createValidResult();
+    }
+
+    MethodList *current = methods;
+    ValidationResult combinedResult = _createValidResult();
+    
+    while (current != NULL)
+    {
+        if (current->method != NULL && current->method->content != NULL && current->method->content->related != NULL)
+        {
+            ValidationResult relatedFunctionsResult = _validateRelatedFunctionsExist(current->method->content->related->related, methods);
+            if (!relatedFunctionsResult.succeed)
+            {
+                if (combinedResult.succeed)
+                {
+                    // First error, initialize the combined result
+                    combinedResult = relatedFunctionsResult;
+                }
+                else
+                {
+                    // Additional error, combine with existing
+                    ValidationResult results[] = {combinedResult, relatedFunctionsResult};
+                    combinedResult = combineValidationResults(results, 2);
+                }
+            }
+            else
+            {
+                releaseValidationResult(&relatedFunctionsResult);
+            }
+        }
+        current = current->next;
+    }
+
+    return combinedResult;
+}
+
 /** PUBLIC FUNCTIONS */
 
 ValidationConfig createDefaultValidationConfig()
@@ -204,7 +440,12 @@ ValidationResult validateMethods(MethodTitle *methods, ValidationConfig *config)
         return _createValidResult(); // Empty methods list is also valid
     }
 
-    return _validateMethodList(methods->methods, config);
+    ValidationResult duplicatesResult = _validateMethodDuplicates(methods->methods, config);
+    ValidationResult methodListResult = _validateMethodList(methods->methods, config);
+    ValidationResult relatedFunctionsResult = _validateAllRelatedFunctions(methods->methods, config);
+
+    ValidationResult results[] = {duplicatesResult, methodListResult, relatedFunctionsResult};
+    return combineValidationResults(results, 3);
 }
 
 ValidationResult validateMethod(Method *method, ValidationConfig *config)
@@ -400,6 +641,8 @@ ValidationResult validateRelated(RelatedTitle *related, ValidationConfig *config
         return _createValidResult(); // Related methods are optional
     }
 
+    // Necesitamos acceder a la lista completa de métodos para validar que las funciones relacionadas existan
+    // Esto se hará desde el nivel superior (validateMethods)
     return _validateRelatedList(related->related, config);
 }
 
@@ -410,24 +653,74 @@ ValidationResult validateStyle(StyleTitle *style, ValidationConfig *config)
         return _createValidResult(); // Style is optional
     }
 
-    // Basic style validation - can be extended
+    // Si se incluye un objeto style, debe tener al menos method_style o variable_style
+    if (style->method_style == NULL && style->variable_style == NULL)
+    {
+        return _createInvalidResult("Style object cannot be empty - must contain method_style or variable_style");
+    }
+
+    ValidationResult methodStyleResult = _createValidResult();
+    ValidationResult variableStyleResult = _createValidResult();
+
+    // Validar method_style si existe
     if (style->method_style != NULL)
     {
         if (style->method_style->title == NULL)
         {
-            return _createInvalidResult("Method style title cannot be NULL");
+            methodStyleResult = _createInvalidResult("Method style title cannot be NULL");
+        }
+        else if (!validate_css(style->method_style->title))
+        {
+            methodStyleResult = _createInvalidResult("Method style title contains invalid CSS");
+        }
+
+        if (style->method_style->description != NULL && !validate_css(style->method_style->description))
+        {
+            if (methodStyleResult.succeed)
+            {
+                methodStyleResult = _createInvalidResult("Method style description contains invalid CSS");
+            }
+            else
+            {
+                // Combinar con el error existente
+                ValidationResult descResult = _createInvalidResult("Method style description contains invalid CSS");
+                ValidationResult results[] = {methodStyleResult, descResult};
+                methodStyleResult = combineValidationResults(results, 2);
+            }
         }
     }
 
+    // Validar variable_style si existe
     if (style->variable_style != NULL)
     {
         if (style->variable_style->title == NULL)
         {
-            return _createInvalidResult("Variable style title cannot be NULL");
+            variableStyleResult = _createInvalidResult("Variable style title cannot be NULL");
+        }
+        else if (!validate_css(style->variable_style->title))
+        {
+            variableStyleResult = _createInvalidResult("Variable style title contains invalid CSS");
+        }
+
+        if (style->variable_style->description != NULL && !validate_css(style->variable_style->description))
+        {
+            if (variableStyleResult.succeed)
+            {
+                variableStyleResult = _createInvalidResult("Variable style description contains invalid CSS");
+            }
+            else
+            {
+                // Combinar con el error existente
+                ValidationResult descResult = _createInvalidResult("Variable style description contains invalid CSS");
+                ValidationResult results[] = {variableStyleResult, descResult};
+                variableStyleResult = combineValidationResults(results, 2);
+            }
         }
     }
 
-    return _createValidResult();
+    // Combinar resultados de ambos estilos
+    ValidationResult results[] = {methodStyleResult, variableStyleResult};
+    return combineValidationResults(results, 2);
 }
 
 /** HELPER FUNCTIONS */
@@ -466,7 +759,7 @@ boolean isValidType(const char *type)
 
     // Basic type validation - extend as needed
     const char *valid_types[] = {
-        "string", "int", "float", "boolean", "object", "array", "number", "void", "Date"
+        "string", "int", "float", "boolean", "object", "array", "number", "void", "Date", "function"
     };
 
     int num_types = sizeof(valid_types) / sizeof(valid_types[0]);
@@ -478,9 +771,29 @@ boolean isValidType(const char *type)
         }
     }
 
-    // Permitir tipos personalizados que no estén en la lista predefinida
-    // pero que sean identificadores válidos
-    return isValidIdentifier(type);
+    // Verificar si es un número (no permitido como tipo)
+    boolean is_numeric = true;
+    for (int i = 0; type[i] != '\0'; i++)
+    {
+        if (!isdigit(type[i]) && type[i] != '.' && type[i] != '-')
+        {
+            is_numeric = false;
+            break;
+        }
+    }
+    if (is_numeric)
+    {
+        return false;
+    }
+
+    // Verificar si es un valor booleano (no permitido como tipo)
+    if (strcmp(type, "true") == 0 || strcmp(type, "false") == 0)
+    {
+        return false;
+    }
+
+    // Solo permitir los tipos predefinidos - rechazar cualquier tipo personalizado
+    return false;
 }
 
 boolean isValidRegex(const char *regex)
@@ -493,6 +806,7 @@ boolean isValidRegex(const char *regex)
     // Basic regex validation - check for balanced brackets and basic syntax
     int bracket_count = 0;
     int paren_count = 0;
+    int brace_count = 0;
 
     for (int i = 0; regex[i] != '\0'; i++)
     {
@@ -512,10 +826,28 @@ boolean isValidRegex(const char *regex)
             paren_count--;
             if (paren_count < 0) return false;
             break;
+        case '{':
+            brace_count++;
+            break;
+        case '}':
+            brace_count--;
+            if (brace_count < 0) return false;
+            break;
+        case '\\':
+            // Verificar secuencias de escape válidas
+            if (regex[i + 1] == '\0') return false; // Backslash al final
+            i++; // Saltar el siguiente carácter
+            break;
         }
     }
 
-    return bracket_count == 0 && paren_count == 0;
+    // Verificar que todos los delimitadores estén balanceados
+    if (bracket_count != 0 || paren_count != 0 || brace_count != 0)
+    {
+        return false;
+    }
+
+    return true;
 }
 
 boolean isValidRange(const char *range)
@@ -541,7 +873,7 @@ boolean isValidRange(const char *range)
 
     // Range format "min-max"
     char *dash = strchr(range, '-');
-    if (dash != NULL)
+    if (dash != NULL && dash != range && dash[1] != '\0')
     {
         // Check if both parts are numbers
         for (char *p = (char*)range; p < dash; p++)
@@ -565,13 +897,18 @@ boolean isValidRange(const char *range)
     if (range[0] == '[' && range[strlen(range) - 1] == ']')
     {
         // Extraer el contenido entre corchetes
-        char *content = malloc(strlen(range) - 1);
-        strncpy(content, range + 1, strlen(range) - 2);
-        content[strlen(range) - 2] = '\0';
+        size_t content_len = strlen(range) - 2;
+        if (content_len == 0) return false; // "[,]" no es válido
+        
+        char *content = malloc(content_len + 1);
+        if (content == NULL) return false; // Error de memoria
+        
+        strncpy(content, range + 1, content_len);
+        content[content_len] = '\0';
         
         // Buscar la coma
         char *comma = strchr(content, ',');
-        if (comma != NULL)
+        if (comma != NULL && comma != content && comma[1] != '\0')
         {
             // Verificar que ambas partes sean números
             boolean valid = true;

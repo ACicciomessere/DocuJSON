@@ -57,6 +57,7 @@ endif ()
 add_executable(Compiler
 	src/main/c/backend/code-generation/Generator.c
 	src/main/c/backend/domain-specific/DocuJSON.c
+	src/main/c/backend/domain-specific/utils.c
 	src/main/c/EntryPoint.c
 	src/main/c/frontend/lexical-analysis/FlexActions.c
 	src/main/c/frontend/lexical-analysis/FlexScanner.c

@@ -37,6 +37,26 @@
                 "validateUserData",
                 "saveUserData"
             ]
+        },
+        "validateUserData": {
+            params: {
+                "user_info": {
+                    type: "object",
+                    description: "User information object"
+                }
+            },
+            description: "Validates the user information",
+            type: "boolean"
+        },
+        "saveUserData": {
+            params: {
+                "user_info": {
+                    type: "object",
+                    description: "User information object"
+                }
+            },
+            description: "Saves the user information",
+            type: "boolean"
         }
     },
     variables: {
@@ -55,12 +75,12 @@
     },
     style: {
         methods: {
-            title: "color: #e74c3c, font-weight: bold, font-size: 19px",
-            description: "color: #c0392b, font-size: 15px, font-style: italic"
+            title: "color: #e74c3c; font-weight: bold; font-size: 19px;",
+            description: "color: #c0392b; font-size: 15px;"
         },
         variables: {
-            title: "color: #d35400, font-size: 17px",
-            description: "color: #e67e22, font-size: 13px"
+            title: "color: #d35400; font-size: 17px;",
+            description: "color: #e67e22; font-size: 13px;"
         }
     }
 } 

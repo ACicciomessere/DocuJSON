@@ -1,0 +1,25 @@
+{
+  methods: {
+    "processData": {
+      params: {
+        "data": {
+          type: "string",
+          description: "Data to process."
+        }
+      },
+      description: "Processes the input data using helper functions.",
+      type: "boolean",
+      related: ["validateData", "transformData", "saveData"]
+    },
+    "validateData": {
+      params: {
+        "data": {
+          type: "string",
+          description: "Data to validate."
+        }
+      },
+      description: "Validates the input data format.",
+      type: "boolean"
+    }
+  }
+} 

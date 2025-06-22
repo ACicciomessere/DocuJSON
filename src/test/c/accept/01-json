@@ -20,22 +20,43 @@
                     description: "description"
                 }
             }
+        },
+        "nombreMethod2": {
+            params: {
+                "nombreParam": {
+                    type: "string",
+                    regex: "^[a-zA-Z0-9]+$",
+                    range: "[0,100]",
+                    description: "description"
+                }
+            },
+            description: "description",
+            type: "void",
+            related: [
+                "nombreMethod2"
+            ],
+            variables: {
+                "nombreVariableInterna": {
+                    type: "string",
+                    description: "description"
+                }
+            }
         }
     },
     variables:{
       "nombreVariableGlobal":{
-        type: "tipoVariable",
+        type: "string",
         description: "descripción"
       }
     },
     style: {
         methods: {
-            title: "formato de estilo",
-            description: "formato de estilo"
+            title: "color: #2c3e50; font-weight: bold; font-size: 18px;",
+            description: "color: #7f8c8d; font-size: 14px;"
         }, 
         variables: {
-            title: "formato de estulo",
-            description: "formato de estilo"
+            title: "color: #34495e; font-size: 16px;",
+            description: "color: #95a5a6; font-size: 12px;"
         }
     }
 }

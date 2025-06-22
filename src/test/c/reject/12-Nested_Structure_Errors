@@ -32,11 +32,8 @@
     },
     style: {
         methods: {
-            title: "color: blue",
-            description: "font-size: 16px",
-            invalidNestedProperty: {
-                color: "red"
-            }
+            title: "color: blue; invalid-property: value;",
+            description: "font-size: 16px; another-invalid-prop: value;"
         }
     }
 } 

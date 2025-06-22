@@ -35,6 +35,34 @@
                     description: "Overall validation result"
                 }
             }
+        },
+        "complexFunction": {
+            params: {
+                "input": {
+                    type: "string",
+                    description: "Input parameter"
+                },
+                "options": {
+                    type: "object",
+                    description: "Configuration options"
+                },
+                "callback": {
+                    type: "function",
+                    description: "Callback function to execute"
+                }
+            },
+            description: "Complex function with multiple parameters",
+            type: "object"
+        },
+        "simpleFunction": {
+            params: {
+                "value": {
+                    type: "number",
+                    description: "Simple numeric value"
+                }
+            },
+            description: "Simple function with one parameter",
+            type: "string"
         }
     },
     variables: {
@@ -45,16 +73,24 @@
         "defaultTimeout": {
             type: "number",
             description: "Default timeout in milliseconds for validation operations"
+        },
+        "config": {
+            type: "object",
+            description: "Global configuration object"
+        },
+        "defaultValue": {
+            type: "string",
+            description: "Default value for operations"
         }
     },
     style: {
         methods: {
-            title: "color: #2c3e50, font-weight: bold, font-size: 18px",
-            description: "color: #7f8c8d, font-size: 14px, font-style: italic"
+            title: "color: #8e44ad; font-weight: 600; font-size: 20px;",
+            description: "color: #9b59b6; font-size: 15px;"
         },
         variables: {
-            title: "color: #34495e, font-size: 16px",
-            description: "color: #95a5a6, font-size: 12px"
+            title: "color: #6c5ce7; font-size: 17px;",
+            description: "color: #a29bfe; font-size: 13px;"
         }
     }
 } 

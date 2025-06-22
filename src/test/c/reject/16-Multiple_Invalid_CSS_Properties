@@ -1,0 +1,30 @@
+{
+    methods: {
+        "testFunction": {
+            params: {
+                "param1": {
+                    type: "string",
+                    description: "Test parameter"
+                }
+            },
+            description: "Test function description",
+            type: "string"
+        }
+    },
+    variables: {
+        "testVar": {
+            type: "number",
+            description: "Test variable"
+        }
+    },
+    style: {
+        methods: {
+            title: "color: #2c3e50; invalid-prop1: value1; font-weight: bold;",
+            description: "color: #7f8c8d; font-size: 14px; invalid-prop2: value2;"
+        },
+        variables: {
+            title: "color: #34495e; font-size: 16px; invalid-prop3: value3; invalid-prop4: value4;",
+            description: "color: #95a5a6; font-size: 12px;"
+        }
+    }
+} 

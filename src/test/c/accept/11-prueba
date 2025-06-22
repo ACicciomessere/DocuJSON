@@ -21,18 +21,18 @@
     },
     variables:{
       "nombreVariableGlobal":{
-        type: "tipoVariable",
+        type: "string",
         description: "descripción"
       }
     },
     style: {
         methods: {
-            title: "formato de estilo",
-            description: "formato de estilo"
+            title: "color: #8e44ad; font-weight: 600; font-size: 20px;",
+            description: "color: #8e44ad; font-weight: 600; font-size: 20px;"
         }, 
         variables: {
-            title: "formato de estulo",
-            description: "formato de estilo"
+            title: "color: #8e44ad; font-weight: 600; font-size: 20px;",
+            description: "color: #8e44ad; font-weight: 600; font-size: 20px;"
         }
     }
 }

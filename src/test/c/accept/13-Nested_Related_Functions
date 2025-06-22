@@ -61,6 +61,46 @@
                 "processData",
                 "applyTransformationRule"
             ]
+        },
+        "saveData": {
+            params: {
+                "data": {
+                    type: "object",
+                    description: "Data to save"
+                }
+            },
+            description: "Saves the data to the database",
+            type: "boolean"
+        },
+        "notifyCompletion": {
+            params: {
+                "message": {
+                    type: "string",
+                    description: "Message to notify completion"
+                }
+            },
+            description: "Notifies the completion of the data processing operation",
+            type: "boolean"
+        },
+        "logValidationError": {
+            params: {
+                "error": {
+                    type: "string",
+                    description: "Error message to log"
+                }
+            },
+            description: "Logs the validation error",
+            type: "boolean"
+        },
+        "applyTransformationRule": {
+            params: {
+                "data": {
+                    type: "object",
+                    description: "Data to apply transformation rule"
+                }
+            },
+            description: "Applies the transformation rule to the data",
+            type: "boolean"
         }
     },
     variables: {
@@ -75,12 +115,12 @@
     },
     style: {
         methods: {
-            title: "color: #8e44ad, font-weight: 600, font-size: 20px",
-            description: "color: #9b59b6, font-size: 15px"
+            title: "color: #8e44ad; font-weight: 600; font-size: 20px;",
+            description: "color: #9b59b6; font-size: 15px;"
         },
         variables: {
-            title: "color: #6c5ce7, font-size: 17px",
-            description: "color: #a29bfe, font-size: 13px"
+            title: "color: #6c5ce7; font-size: 17px;",
+            description: "color: #a29bfe; font-size: 13px;"
         }
     }
 } 
