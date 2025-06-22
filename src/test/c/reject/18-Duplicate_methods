@@ -13,16 +13,20 @@
             },
             description: "Function with duplicate parameter names",
             type: "void"
-        }
-    },
-    variables: {
-        "testVar": {
-            type: "string",
-            description: "Test variable"
         },
-        "testVar": {
-            type: "void",
-            description: "Duplicate variable name"
+        "duplicateTest": {
+            params: {
+                "param1": {
+                    type: "string",
+                    description: "First parameter"
+                },
+                "param1": {
+                    type: "number",
+                    description: "Duplicate parameter name"
+                }
+            },
+            description: "Function with duplicate parameter names",
+            type: "void"
         }
     }
-} 
+}

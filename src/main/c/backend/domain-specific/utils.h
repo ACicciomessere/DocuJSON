@@ -6,9 +6,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <stdbool.h>
+#include "../../shared/Type.h"
 
-bool is_valid_property(const char* property);
-bool is_valid_value(const char* value);
+boolean is_valid_property(const char* property);
+boolean is_valid_value(const char* value);
 
 #endif

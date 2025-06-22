@@ -1,12 +1,7 @@
 #include "utils.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <stdbool.h>
 
 // Función para validar una propiedad CSS
-bool is_valid_property(const char* property) {
+boolean is_valid_property(const char* property) {
     if (!property || strlen(property) == 0) return false;
     
     // Lista de propiedades CSS comunes
@@ -44,7 +39,7 @@ bool is_valid_property(const char* property) {
 }
 
 // Función para validar un valor CSS básico
-bool is_valid_value(const char* value) {
+boolean is_valid_value(const char* value) {
     if (!value || strlen(value) == 0) return false;
     
     // Permitir valores que contengan: letras, números, espacios, guiones, puntos,

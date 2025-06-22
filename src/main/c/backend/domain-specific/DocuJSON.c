@@ -34,6 +34,8 @@ static boolean _methodExists(const char *methodName, MethodList *methods);
 static ValidationResult _validateAllRelatedFunctions(MethodList *methods, ValidationConfig *config);
 static ValidationResult _validateStyleList(StyleList *styleList, ValidationConfig *config);
 static ValidationResult _validateStyleStructure(StyleStructure *style, ValidationConfig *config);
+static ValidationResult _validateVariableDuplicates(VariableList *variables, ValidationConfig *config);
+static boolean _areVariablesDuplicate(Variable *variable1, Variable *variable2);
 
 /**
  * Creates a successful validation result
@@ -406,6 +408,43 @@ static ValidationResult _validateStyleStructure(StyleStructure *style, Validatio
     return _createValidResult();
 }
 
+/* Validates a list of variable duplicates*/
+static ValidationResult _validateVariableDuplicates(VariableList *variables, ValidationConfig *config)
+{
+    if (variables == NULL)
+    {
+        return _createValidResult();
+    }
+
+    VariableList *current = variables;
+    while (current != NULL)
+    {
+        VariableList *next = current->next;
+        while (next != NULL)
+        {
+            if (_areVariablesDuplicate(current->variable, next->variable))
+            {
+                char error_message[512];
+                snprintf(error_message, sizeof(error_message), 
+                        "Duplicate variable found: '%s'", 
+                        current->variable->name);
+                return _createInvalidResult(error_message);
+            }
+            next = next->next;
+        }
+        current = current->next;
+    }
+
+    return _createValidResult();
+}
+
+/* Checks if two variables are duplicates*/
+static boolean _areVariablesDuplicate(Variable *variable1, Variable *variable2)
+{
+    // Check if variable names are the same
+    return strcmp(variable1->name, variable2->name) == 0;
+}
+
 /* PUBLIC FUNCTIONS */
 
 ValidationConfig createDefaultValidationConfig()
@@ -565,7 +604,11 @@ ValidationResult validateVariables(VariablesTitle *variables, ValidationConfig *
         return _createValidResult(); // Variables are optional
     }
 
-    return _validateVariablesList(variables->variables, config);
+    ValidationResult duplicatesResult = _validateVariableDuplicates(variables->variables, config);
+    ValidationResult variableListResult = _validateVariablesList(variables->variables, config);
+
+    ValidationResult results[] = {duplicatesResult, variableListResult};
+    return combineValidationResults(results, 2);
 }
 
 ValidationResult validateVariable(Variable *variable, ValidationConfig *config)
