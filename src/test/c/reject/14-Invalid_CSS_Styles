@@ -19,12 +19,12 @@
     },
     style: {
         methods: {
-            title: "color: #2c3e50; font-weight: bold; font-size: 18px;",
-            description: "color: #7f8c8d; font-size: 14px; font-style: italic;"
+            title: "color": "#2c3e50"; "font-weight": "bold"; "font-size": "18px";,
+            description: "color": "#7f8c8d"; "font-size": "14px"; "font-style": "italic";
         },
         variables: {
-            title: "color: #34495e; font-size: 16px; invalid-property: value;",
-            description: "color: #95a5a6; font-size: 12px;"
+            title: "color": "#34495e"; "font-size": "16px"; "invalid-property": "value";,
+            description: "color": "#95a5a6"; "font-size": "12px";
         }
     }
 } 

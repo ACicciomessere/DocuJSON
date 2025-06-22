@@ -1,8 +1,8 @@
 {
     style: {
         methods: {
-            title: "formato de estilo",
-            description: "formato de estilo"
+            title: "color": "#2c3e50"; "font-weight": "bold"; "font-size": "18px";,
+            description: "color": "#7f8c8d"; "font-size": "14px";
         }
     },
     methods: {

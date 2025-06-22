@@ -44,27 +44,27 @@ const int main(const int count, const char **arguments)
 		// ----------------------------------------------------------------------------------------
 		// Beginning of the Backend... ------------------------------------------------------------
 		logDebugging(logger, "Computing expression value...");
-		// ValidationConfig validationConfig = createDefaultValidationConfig();
-		// ValidationResult validationResult = validateProgram(program, &validationConfig);
-		// if (validationResult.succeed)
-		// {
-		// generate(&compilerState);
-		// }
-		// else
-		// {
-		// 	logError(logger, "The computation phase rejects the input program.");
-		// 	compilationStatus = FAILED;
-		// }
+		ValidationConfig validationConfig = createDefaultValidationConfig();
+		ValidationResult validationResult = validateProgram(program, &validationConfig);
+		if (validationResult.succeed)
+		{
+		generate(&compilerState);
+		}
+		else
+		{
+			logError(logger, "The computation phase rejects the input program.");
+			compilationStatus = FAILED;
+		}
 		// Liberar el ValidationResult
-		// releaseValidationResult(&validationResult);
+		releaseValidationResult(&validationResult);
 		// ...end of the Backend. -----------------------------------------------------------------
 		// ----------------------------------------------------------------------------------------
 	}
-	// else
-	// {
-	// 	logError(logger, "The syntactic-analysis phase rejects the input program.");
-	// 	compilationStatus = FAILED;
-	// }
+	else
+	{
+		logError(logger, "The syntactic-analysis phase rejects the input program.");
+		compilationStatus = FAILED;
+	}
 	logDebugging(logger, "Releasing AST resources...");
 	releaseProgram(program);
 	logDebugging(logger, "Releasing modules resources...");
