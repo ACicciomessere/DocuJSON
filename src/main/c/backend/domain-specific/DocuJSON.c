@@ -140,21 +140,13 @@ static ValidationResult _validateVariablesList(VariableList *variables, Validati
     }
 }
 
-/**
- * Validates a list of related methods recursively
- */
+/* Validates a list of related methods recursively*/
 static ValidationResult _validateRelatedList(RelatedList *related, ValidationConfig *config)
 {
     if (related == NULL)
     {
         return _createValidResult();
     }
-
-    if (related->name == NULL || strlen(related->name) == 0)
-    {
-        return _createInvalidResult("Related method name cannot be empty");
-    }
-
     if (!isValidIdentifier(related->name))
     {
         char *error = createErrorMessage("Related method", "Invalid identifier format");
@@ -202,12 +194,7 @@ static ValidationResult _validateMethodDuplicates(MethodList *methods, Validatio
  * Checks if two methods are duplicates
  */
 static boolean _areMethodsDuplicate(Method *method1, Method *method2)
-{
-    if (method1 == NULL || method2 == NULL)
-    {
-        return false;
-    }
-
+{     
     // Check if method names are the same
     if (strcmp(method1->name, method2->name) != 0)
     {
@@ -247,18 +234,7 @@ static boolean _areParamsListsEqual(ParamsList *params1, ParamsList *params2)
 
     while (params1 != NULL && params2 != NULL)
     {
-        // Check if param structures are valid
-        if (params1->param == NULL || params2->param == NULL)
-        {
-            return false;
-        }
-        
         // Compare parameter names
-        if (params1->param->name == NULL || params2->param->name == NULL)
-        {
-            return false;
-        }
-        
         if (strcmp(params1->param->name, params2->param->name) != 0)
         {
             return false;
@@ -295,19 +271,12 @@ static boolean _areParamsListsEqual(ParamsList *params1, ParamsList *params2)
     return params1 == NULL && params2 == NULL;
 }
 
-/**
- * Validates a list of related functions exist
- */
+/* Validates a list of related functions exist*/
 static ValidationResult _validateRelatedFunctionsExist(RelatedList *related, MethodList *allMethods)
 {
     if (related == NULL)
     {
         return _createValidResult();
-    }
-
-    if (related->name == NULL || strlen(related->name) == 0)
-    {
-        return _createInvalidResult("Related method name cannot be empty");
     }
 
     if (!isValidIdentifier(related->name))
@@ -329,9 +298,7 @@ static ValidationResult _validateRelatedFunctionsExist(RelatedList *related, Met
     return _validateRelatedFunctionsExist(related->next, allMethods);
 }
 
-/**
- * Checks if a method exists in a list of methods
- */
+/* Checks if a method exists in a list of methods*/
 static boolean _methodExists(const char *methodName, MethodList *methods)
 {
     if (methods == NULL)
@@ -342,7 +309,7 @@ static boolean _methodExists(const char *methodName, MethodList *methods)
     MethodList *current = methods;
     while (current != NULL)
     {
-        if (current->method != NULL && strcmp(current->method->name, methodName) == 0)
+        if (strcmp(current->method->name, methodName) == 0)
         {
             return true;
         }
@@ -352,9 +319,7 @@ static boolean _methodExists(const char *methodName, MethodList *methods)
     return false;
 }
 
-/**
- * Validates all related functions for a list of methods
- */
+/* Validates all related functions for a list of methods*/
 static ValidationResult _validateAllRelatedFunctions(MethodList *methods, ValidationConfig *config)
 {
     if (methods == NULL)
@@ -395,9 +360,7 @@ static ValidationResult _validateAllRelatedFunctions(MethodList *methods, Valida
     return combinedResult;
 }
 
-/**
- * Validates a list of style structures recursively
- */
+/* Validates a list of style structures recursively*/
 static ValidationResult _validateStyleList(StyleList *styleList, ValidationConfig *config)
 {
     if (styleList == NULL)
@@ -421,27 +384,9 @@ static ValidationResult _validateStyleList(StyleList *styleList, ValidationConfi
     }
 }
 
-/**
- * Validates a single style structure
- */
+/* Validates a single style structure*/
 static ValidationResult _validateStyleStructure(StyleStructure *style, ValidationConfig *config)
 {
-    if (style == NULL)
-    {
-        return _createInvalidResult("Style structure is NULL");
-    }
-
-    if (style->label == NULL || strlen(style->label) == 0)
-    {
-        return _createInvalidResult("Style property name cannot be empty");
-    }
-
-    if (style->value == NULL || strlen(style->value) == 0)
-    {
-        return _createInvalidResult("Style property value cannot be empty");
-    }
-
-    // Validar que la propiedad CSS sea válida
     if (!is_valid_property(style->label))
     {
         char *error = createErrorMessage("CSS property", "Invalid property name");
@@ -450,7 +395,6 @@ static ValidationResult _validateStyleStructure(StyleStructure *style, Validatio
         return result;
     }
 
-    // Validar que el valor CSS sea válido
     if (!is_valid_value(style->value))
     {
         char *error = createErrorMessage("CSS value", "Invalid property value");
@@ -462,7 +406,7 @@ static ValidationResult _validateStyleStructure(StyleStructure *style, Validatio
     return _createValidResult();
 }
 
-/** PUBLIC FUNCTIONS */
+/* PUBLIC FUNCTIONS */
 
 ValidationConfig createDefaultValidationConfig()
 {
@@ -481,12 +425,6 @@ ValidationConfig createDefaultValidationConfig()
 
 ValidationResult validateProgram(Program *program, ValidationConfig *config)
 {
-    if (program == NULL)
-    {
-        logError(_logger, "Program is NULL");
-        return _createInvalidResult("Program structure is NULL");
-    }
-
     ValidationResult methodsResult = validateMethods(program->methods, config);
     ValidationResult variablesResult = validateVariables(program->variables, config);
     ValidationResult styleResult = validateStyle(program->style, config);
@@ -519,16 +457,6 @@ ValidationResult validateMethods(MethodTitle *methods, ValidationConfig *config)
 
 ValidationResult validateMethod(Method *method, ValidationConfig *config)
 {
-    if (method == NULL)
-    {
-        return _createInvalidResult("Method is NULL");
-    }
-
-    if (method->name == NULL || strlen(method->name) == 0)
-    {
-        return _createInvalidResult("Method name cannot be empty");
-    }
-
     if (config->validate_method_names && !isValidIdentifier(method->name))
     {
         char *error = createErrorMessage("Method name", "Invalid identifier format");
@@ -550,11 +478,6 @@ ValidationResult validateMethod(Method *method, ValidationConfig *config)
 
 ValidationResult validateMethodContent(MethodContent *content, ValidationConfig *config)
 {
-    if (content == NULL)
-    {
-        return _createInvalidResult("Method content is NULL");
-    }
-
     if (config->require_method_description && 
         (content->description == NULL || !isValidDescription(content->description, config->min_description_length)))
     {
@@ -585,17 +508,7 @@ ValidationResult validateParameters(ParamsTitle *params, ValidationConfig *confi
 }
 
 ValidationResult validateParameter(Param *param, ValidationConfig *config)
-{
-    if (param == NULL)
-    {
-        return _createInvalidResult("Parameter is NULL");
-    }
-
-    if (param->name == NULL || strlen(param->name) == 0)
-    {
-        return _createInvalidResult("Parameter name cannot be empty");
-    }
-
+{   
     if (config->validate_param_names && !isValidIdentifier(param->name))
     {
         char *error = createErrorMessage("Parameter name", "Invalid identifier format");
@@ -616,12 +529,7 @@ ValidationResult validateParameter(Param *param, ValidationConfig *config)
 }
 
 ValidationResult validateParameterData(ParamData *data, ValidationConfig *config)
-{
-    if (data == NULL)
-    {
-        return _createInvalidResult("Parameter data is NULL");
-    }
-
+{   
     if (config->require_param_types && (data->type == NULL || !isValidType(data->type)))
     {
         return _createInvalidResult("Parameter type is required and must be valid");
@@ -661,17 +569,7 @@ ValidationResult validateVariables(VariablesTitle *variables, ValidationConfig *
 }
 
 ValidationResult validateVariable(Variable *variable, ValidationConfig *config)
-{
-    if (variable == NULL)
-    {
-        return _createInvalidResult("Variable is NULL");
-    }
-
-    if (variable->name == NULL || strlen(variable->name) == 0)
-    {
-        return _createInvalidResult("Variable name cannot be empty");
-    }
-
+{   
     if (!isValidIdentifier(variable->name))
     {
         char *error = createErrorMessage("Variable name", "Invalid identifier format");
@@ -684,12 +582,7 @@ ValidationResult validateVariable(Variable *variable, ValidationConfig *config)
 }
 
 ValidationResult validateVariableData(VariableData *data, ValidationConfig *config)
-{
-    if (data == NULL)
-    {
-        return _createInvalidResult("Variable data is NULL");
-    }
-
+{   
     if (data->type == NULL || !isValidType(data->type))
     {
         return _createInvalidResult("Variable type is required and must be valid");
@@ -710,8 +603,8 @@ ValidationResult validateRelated(RelatedTitle *related, ValidationConfig *config
         return _createValidResult(); // Related methods are optional
     }
 
-    // Necesitamos acceder a la lista completa de métodos para validar que las funciones relacionadas existan
-    // Esto se hará desde el nivel superior (validateMethods)
+    // We need to access the complete list of methods to validate that related functions exist
+    // This will be done from the upper level (validateMethods)
     return _validateRelatedList(related->related, config);
 }
 
@@ -722,7 +615,7 @@ ValidationResult validateStyle(StyleTitle *style, ValidationConfig *config)
         return _createValidResult(); // Style is optional
     }
 
-    // Si se incluye un objeto style, debe tener al menos method_style o variable_style
+    // If a style object is included, it must have at least method_style or variable_style
     if (style->method_style == NULL && style->variable_style == NULL)
     {
         return _createInvalidResult("Style object cannot be empty - must contain method_style or variable_style");
@@ -731,25 +624,18 @@ ValidationResult validateStyle(StyleTitle *style, ValidationConfig *config)
     ValidationResult methodStyleResult = _createValidResult();
     ValidationResult variableStyleResult = _createValidResult();
 
-    // Validar method_style si existe
+    // Validate method_style if it exists
     if (style->method_style != NULL)
     {
-        if (style->method_style->title == NULL)
+        ValidationResult titleResult = _validateStyleList(style->method_style->title, config);
+        if (!titleResult.succeed)
         {
-            methodStyleResult = _createInvalidResult("Method style title cannot be NULL");
+            methodStyleResult = _createInvalidResult("Method style title contains invalid CSS");
+            releaseValidationResult(&titleResult);
         }
         else
         {
-            ValidationResult titleResult = _validateStyleList(style->method_style->title, config);
-            if (!titleResult.succeed)
-            {
-                methodStyleResult = _createInvalidResult("Method style title contains invalid CSS");
-                releaseValidationResult(&titleResult);
-            }
-            else
-            {
-                releaseValidationResult(&titleResult);
-            }
+            releaseValidationResult(&titleResult);
         }
 
         if (style->method_style->description != NULL)
@@ -763,7 +649,7 @@ ValidationResult validateStyle(StyleTitle *style, ValidationConfig *config)
                 }
                 else
                 {
-                    // Combinar con el error existente
+                    // Combine with existing error
                     ValidationResult results[] = {methodStyleResult, _createInvalidResult("Method style description contains invalid CSS")};
                     methodStyleResult = combineValidationResults(results, 2);
                 }
@@ -772,25 +658,18 @@ ValidationResult validateStyle(StyleTitle *style, ValidationConfig *config)
         }
     }
 
-    // Validar variable_style si existe
+    // Validate variable_style if it exists
     if (style->variable_style != NULL)
     {
-        if (style->variable_style->title == NULL)
+        ValidationResult titleResult = _validateStyleList(style->variable_style->title, config);
+        if (!titleResult.succeed)
         {
-            variableStyleResult = _createInvalidResult("Variable style title cannot be NULL");
+            variableStyleResult = _createInvalidResult("Variable style title contains invalid CSS");
+            releaseValidationResult(&titleResult);
         }
         else
         {
-            ValidationResult titleResult = _validateStyleList(style->variable_style->title, config);
-            if (!titleResult.succeed)
-            {
-                variableStyleResult = _createInvalidResult("Variable style title contains invalid CSS");
-                releaseValidationResult(&titleResult);
-            }
-            else
-            {
-                releaseValidationResult(&titleResult);
-            }
+            releaseValidationResult(&titleResult);
         }
 
         if (style->variable_style->description != NULL)
@@ -804,7 +683,7 @@ ValidationResult validateStyle(StyleTitle *style, ValidationConfig *config)
                 }
                 else
                 {
-                    // Combinar con el error existente
+                    // Combine with existing error
                     ValidationResult results[] = {variableStyleResult, _createInvalidResult("Variable style description contains invalid CSS")};
                     variableStyleResult = combineValidationResults(results, 2);
                 }
@@ -813,20 +692,15 @@ ValidationResult validateStyle(StyleTitle *style, ValidationConfig *config)
         }
     }
 
-    // Combinar resultados de ambos estilos
+    // Combine results from both styles
     ValidationResult results[] = {methodStyleResult, variableStyleResult};
     return combineValidationResults(results, 2);
 }
 
-/** HELPER FUNCTIONS */
+/* HELPER FUNCTIONS */
 
 boolean isValidIdentifier(const char *name)
 {
-    if (name == NULL || strlen(name) == 0)
-    {
-        return false;
-    }
-
     // Must start with letter or underscore
     if (!isalpha(name[0]) && name[0] != '_')
     {
@@ -847,11 +721,6 @@ boolean isValidIdentifier(const char *name)
 
 boolean isValidType(const char *type)
 {
-    if (type == NULL || strlen(type) == 0)
-    {
-        return false;
-    }
-
     // Basic type validation - extend as needed
     const char *valid_types[] = {
         "string", "int", "float", "boolean", "object", "array", "number", "void", "Date", "function"
@@ -866,7 +735,7 @@ boolean isValidType(const char *type)
         }
     }
 
-    // Verificar si es un número (no permitido como tipo)
+    // Check if it's a number (not allowed as type)
     boolean is_numeric = true;
     for (int i = 0; type[i] != '\0'; i++)
     {
@@ -881,23 +750,18 @@ boolean isValidType(const char *type)
         return false;
     }
 
-    // Verificar si es un valor booleano (no permitido como tipo)
+    // Check if it's a boolean value (not allowed as type)
     if (strcmp(type, "true") == 0 || strcmp(type, "false") == 0)
     {
         return false;
     }
 
-    // Solo permitir los tipos predefinidos - rechazar cualquier tipo personalizado
+    // Only allow predefined types - reject any custom types
     return false;
 }
 
 boolean isValidRegex(const char *regex)
 {
-    if (regex == NULL || strlen(regex) == 0)
-    {
-        return false;
-    }
-
     // Basic regex validation - check for balanced brackets and basic syntax
     int bracket_count = 0;
     int paren_count = 0;
@@ -929,14 +793,14 @@ boolean isValidRegex(const char *regex)
             if (brace_count < 0) return false;
             break;
         case '\\':
-            // Verificar secuencias de escape válidas
-            if (regex[i + 1] == '\0') return false; // Backslash al final
-            i++; // Saltar el siguiente carácter
+            // Check for valid escape sequences
+            if (regex[i + 1] == '\0') return false; // Backslash at the end
+            i++; // Skip the next character
             break;
         }
     }
 
-    // Verificar que todos los delimitadores estén balanceados
+    // Check that all delimiters are balanced
     if (bracket_count != 0 || paren_count != 0 || brace_count != 0)
     {
         return false;
@@ -946,12 +810,7 @@ boolean isValidRegex(const char *regex)
 }
 
 boolean isValidRange(const char *range)
-{
-    if (range == NULL || strlen(range) == 0)
-    {
-        return false;
-    }
-
+{    
     // Basic range validation: ">10", "<100", "1-50", ">=0", "<=999", "[0,100]"
     if (range[0] == '>' || range[0] == '<')
     {
@@ -988,24 +847,24 @@ boolean isValidRange(const char *range)
         return true;
     }
 
-    // Range format "[min,max]" - formato de array
+    // Range format "[min,max]" - array format
     if (range[0] == '[' && range[strlen(range) - 1] == ']')
     {
-        // Extraer el contenido entre corchetes
+        // Extract content between brackets
         size_t content_len = strlen(range) - 2;
-        if (content_len == 0) return false; // "[,]" no es válido
+        if (content_len == 0) return false; // "[,]" is not valid
         
         char *content = malloc(content_len + 1);
-        if (content == NULL) return false; // Error de memoria
+        if (content == NULL) return false; // Memory error
         
         strncpy(content, range + 1, content_len);
         content[content_len] = '\0';
         
-        // Buscar la coma
+        // Look for comma
         char *comma = strchr(content, ',');
         if (comma != NULL && comma != content && comma[1] != '\0')
         {
-            // Verificar que ambas partes sean números
+            // Check that both parts are numbers
             boolean valid = true;
             for (char *p = content; p < comma; p++)
             {
@@ -1033,12 +892,7 @@ boolean isValidRange(const char *range)
 }
 
 boolean isValidDescription(const char *description, int min_length)
-{
-    if (description == NULL)
-    {
-        return false;
-    }
-
+{   
     int length = strlen(description);
     if (length < min_length)
     {
