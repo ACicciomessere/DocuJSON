@@ -46,6 +46,7 @@
 "]"                                 { return KeywordLexemeAction(createLexicalAnalyzerContext(), CLOSE_BRACKET); }
 ":"									{ return KeywordLexemeAction(createLexicalAnalyzerContext(), COLON); }
 ","                                 { return KeywordLexemeAction(createLexicalAnalyzerContext(), COMMA); }
+";"                                 { return KeywordLexemeAction(createLexicalAnalyzerContext(), SEMICOLON); }
 "methods"							{ return KeywordLexemeAction(createLexicalAnalyzerContext(), METHODS); }
 "params"							{ return KeywordLexemeAction(createLexicalAnalyzerContext(), PARAMS); }
 "description"						{ return KeywordLexemeAction(createLexicalAnalyzerContext(), DESCRIPTION); }

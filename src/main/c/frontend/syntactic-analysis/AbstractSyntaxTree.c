@@ -79,6 +79,7 @@ void releaseVariable(Variable *variable);
 void releaseVariableData(VariableData *data);
 void releaseStyleTitle(Titles *title);
 void releaseStyle(Style *style);
+void releaseStyleList(StyleList *styleList);
 
 void releaseProgram(Program *program)
 {
@@ -239,8 +240,21 @@ void releaseStyle(Style *style)
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
 	if (style != NULL)
 	{
-		free(style->title);
-		free(style->description);
+		releaseStyleList(style->title);
+		releaseStyleList(style->description);
 		free(style);
+	}
+}
+
+void releaseStyleList(StyleList *styleList)
+{
+	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+	if (styleList != NULL)
+	{
+		free(styleList->style->label);
+		free(styleList->style->value);
+		free(styleList->style);
+		releaseStyleList(styleList->next);
+		free(styleList);
 	}
 }

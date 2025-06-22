@@ -19,12 +19,12 @@
     },
     style: {
         methods: {
-            title: "color: #2c3e50; font-weight: 600; font-size: 20px; text-transform: uppercase; letter-spacing: 1px;",
-            description: "color: #7f8c8d; font-size: 15px; line-height: 1.5; margin: 10px 0;"
+            title: "color": "#2c3e50"; "font-weight": "600"; "font-size": "20px"; "text-transform": "uppercase"; "letter-spacing": "1px";,
+            description: "color": "#7f8c8d"; "font-size": "15px"; "line-height": "1.5"; "margin": "10px 0";   
         },
         variables: {
-            title: "color: #34495e; font-size: 18px; font-weight: 500; border-bottom: 2px solid #3498db;",
-            description: "color: #95a5a6; font-size: 13px; padding: 5px; background-color: #f8f9fa;"
+            title: "color": "#34495e"; "font-size": "18px"; "font-weight": "500"; "border-bottom": "2px solid #3498db";,
+            description: "Wcolor": "#95a5a6"; "font-size": "13px"; "padding": "5px"; "background-color": "#f8f9fa";
         }
     }
 } 

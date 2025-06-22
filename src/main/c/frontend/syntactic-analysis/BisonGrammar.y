@@ -35,6 +35,8 @@
 
 	StyleTitle * style;
 	Style * style_content;
+	StyleList * style_list;
+	StyleStructure * style_string;
 }
 
 /**
@@ -64,6 +66,7 @@
 %token <token> CLOSE_BRACKET
 %token <token> COLON
 %token <token> COMMA
+%token <token> SEMICOLON
 %token <token> TITLE
 %token <token> VARIABLES
 %token <string> STRING
@@ -73,8 +76,6 @@
 /** Non-terminals. */
 %type <param_data> param_data
 %type <variable_data> variable_data
-%type <style_content> method_style_content
-%type <style_content> variables_style_content
 
 %type <Program> program
 
@@ -95,6 +96,11 @@
 %type <related_list> related_list
 
 %type <style> style
+%type <style_content> method_style_content 
+%type <style_content>variables_style_content
+%type <style_list> style_list
+%type <style_string> style_string
+
 /**
  * Precedence and associativity.
  *
@@ -194,15 +200,25 @@ style:
 	;
 
 method_style_content:
-	METHODS COLON OPEN_BRACES TITLE COLON STRING[title] COMMA DESCRIPTION COLON STRING[desc] CLOSE_BRACES		{$$ = StyleSemanticAction($title,$desc);}
-	| METHODS COLON  OPEN_BRACES TITLE COLON STRING[title] CLOSE_BRACES											{$$ = StyleSemanticAction($title,NULL);}
-	| METHODS COLON  OPEN_BRACES DESCRIPTION COLON STRING[desc] CLOSE_BRACES									{$$ = StyleSemanticAction(NULL,$desc);}
+	METHODS COLON OPEN_BRACES TITLE COLON style_list[title] COMMA DESCRIPTION COLON style_list[desc] CLOSE_BRACES		{$$ = StyleSemanticAction($title,$desc);}
+	| METHODS COLON  OPEN_BRACES TITLE COLON style_list[title] CLOSE_BRACES												{$$ = StyleSemanticAction($title,NULL);}
+	| METHODS COLON  OPEN_BRACES DESCRIPTION COLON style_list[desc] CLOSE_BRACES										{$$ = StyleSemanticAction(NULL,$desc);}
 	;
 
 variables_style_content:
-	VARIABLES COLON  OPEN_BRACES TITLE COLON STRING[title] COMMA DESCRIPTION COLON STRING[desc] CLOSE_BRACES		{$$ = StyleSemanticAction($title,$desc);}
-	| VARIABLES COLON  OPEN_BRACES TITLE COLON STRING[title] CLOSE_BRACES											{$$ = StyleSemanticAction($title,NULL);}
-	| VARIABLES COLON  OPEN_BRACES DESCRIPTION COLON STRING[desc] CLOSE_BRACES										{$$ = StyleSemanticAction(NULL,$desc);}
+	VARIABLES COLON  OPEN_BRACES TITLE COLON style_list[title] COMMA DESCRIPTION COLON style_list[desc] CLOSE_BRACES		{$$ = StyleSemanticAction($title,$desc);}
+	| VARIABLES COLON  OPEN_BRACES TITLE COLON style_list[title] CLOSE_BRACES												{$$ = StyleSemanticAction($title,NULL);}
+	| VARIABLES COLON  OPEN_BRACES DESCRIPTION COLON style_list[desc] CLOSE_BRACES											{$$ = StyleSemanticAction(NULL,$desc);}
+	;
+
+style_list:
+	style_string					{$$ = StyleListSemanticAction($1, NULL);}
+	| style_string style_list		{$$ = StyleListSemanticAction($1, $2);}
+	;
+
+
+style_string:
+	STRING[label] COLON STRING[value] SEMICOLON		{$$ = StyleStructureSemanticAction($label, $value);}
 	;
 
 %%

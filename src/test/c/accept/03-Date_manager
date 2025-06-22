@@ -71,8 +71,8 @@
     },
     style: {
         methods: {
-            title: "color: navy; font-size: 28px;",
-            description: "color: darkslategray; font-size: 16px;"
+            title: "color": "navy"; "font-size": "28px";,
+            description: "color": "darkslategray"; "font-size": "16px";
         }
     }
     

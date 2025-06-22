@@ -38,6 +38,8 @@ typedef struct RelatedList RelatedList;
 
 typedef struct StyleTitle StyleTitle;
 typedef struct Style Style;
+typedef struct StyleStructure StyleStructure;
+typedef struct StyleList StyleList;
 
 /**
  * Node types for the Abstract Syntax Tree (AST).
@@ -148,8 +150,20 @@ struct StyleTitle
 
 struct Style
 {
-	char *title;
-	char *description;
+	StyleList *title;
+	StyleList *description;
+};
+
+struct StyleList
+{
+	StyleStructure *style;
+	StyleList *next;
+};
+
+struct StyleStructure
+{
+	char *label;
+	char *value;
 };
 
 /**

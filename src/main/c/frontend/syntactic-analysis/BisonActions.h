@@ -39,6 +39,8 @@ Variable *VariableSemanticAction(char *name, VariableData *data);
 VariableData *VariableDataSemanticAction(char *type, char *description);
 
 StyleTitle *StyleTitleSemanticAction(Token title, Style *method_style, Style *variable_style);
-Style *StyleSemanticAction(char *name, char *value);
+Style *StyleSemanticAction(StyleList *title, StyleList *description);
+StyleList *StyleListSemanticAction(StyleStructure *style, StyleList *next);
+StyleStructure *StyleStructureSemanticAction(char *label, char *value);
 
 #endif

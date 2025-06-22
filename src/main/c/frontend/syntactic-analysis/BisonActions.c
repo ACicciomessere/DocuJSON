@@ -154,7 +154,7 @@ RelatedList *RelatedListSemanticAction(char *name, RelatedList *related)
 	return relatedList;
 }
 
-Style *StyleSemanticAction(char *title, char *description)
+Style *StyleSemanticAction(StyleList *title, StyleList *description)
 {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Style *style = calloc(1, sizeof(Style));
@@ -207,4 +207,22 @@ StyleTitle *StyleTitleSemanticAction(Token title, Style *method_style, Style *va
 	styleTitle->method_style = method_style;
 	styleTitle->variable_style = variable_style;
 	return styleTitle;
+}
+
+StyleList *StyleListSemanticAction(StyleStructure *style, StyleList *next)
+{
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	StyleList *styleList = calloc(1, sizeof(StyleList));
+	styleList->style = style;
+	styleList->next = next;
+	return styleList;
+}
+
+StyleStructure *StyleStructureSemanticAction(char *label, char *value)
+{
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	StyleStructure *style = calloc(1, sizeof(StyleStructure));
+	style->label = label;
+	style->value = value;
+	return style;
 }

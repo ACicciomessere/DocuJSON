@@ -27,12 +27,12 @@
     },
     style: {
         methods: {
-            title: "color: #8e44ad; font-weight: 600; font-size: 20px;",
-            description: "color: #8e44ad; font-weight: 600; font-size: 20px;"
+            title: "color": "#8e44ad"; "font-weight": "600"; "font-size": "20px";,
+            description: "color": "#8e44ad"; "font-weight": "600"; "font-size": "20px";
         }, 
         variables: {
-            title: "color: #8e44ad; font-weight: 600; font-size: 20px;",
-            description: "color: #8e44ad; font-weight: 600; font-size: 20px;"
+            title: "color": "#8e44ad"; "font-weight": "600"; "font-size": "20px";,
+            description: "color": "#8e44ad"; "font-weight": "600"; "font-size": "20px";
         }
     }
 }
